@@ -5,558 +5,759 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mentoria PMMA 26</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { background-color: #000000; color: #ffffff; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Fundo totalmente preto */
+            color: #f8fafc;
+        }
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111111; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308; /* Dourado */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ca8a04; 
+        }
+        
         .glass-panel {
-            background-color: #18181b; /* zinc-900 */
-            border: 1px solid #eab308; /* yellow-500 */
-            box-shadow: 0 4px 30px rgba(234, 179, 8, 0.1);
+            background: rgba(20, 20, 20, 0.85); /* Fundo quase preto */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(234, 179, 8, 0.2); /* Borda levemente dourada */
         }
-        .input-field {
-            background-color: #27272a; /* zinc-800 */
-            border: 1px solid #3f3f46; /* zinc-700 */
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 12px 24px;
+            border-radius: 8px;
+            background: #18181b; /* Zinc 900 */
             color: white;
+            box-shadow: 0 4px 6px -1px rgba(234, 179, 8, 0.1);
+            animation: slideIn 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards;
+            opacity: 0;
+            transform: translateX(100%);
+            border: 1px solid rgba(234, 179, 8, 0.3);
         }
-        .input-field:focus {
-            border-color: #eab308;
-            outline: none;
+        .toast.success { border-left: 4px solid #eab308; } /* Dourado */
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #eab308; }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateX(0); }
         }
-        .btn-primary {
-            background-color: #eab308;
-            color: #000000;
-            font-weight: bold;
-            transition: all 0.3s ease;
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(100%); }
         }
-        .btn-primary:hover {
-            background-color: #ca8a04;
-        }
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid #eab308;
-            color: #eab308;
-            transition: all 0.3s ease;
-        }
-        .btn-secondary:hover {
-            background-color: rgba(234, 179, 8, 0.1);
-        }
-        .btn-danger {
-            background-color: transparent;
-            border: 1px solid #ef4444;
-            color: #ef4444;
-            transition: all 0.3s ease;
-        }
-        .btn-danger:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #18181b; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ca8a04; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans selection:bg-yellow-500 selection:text-black">
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Decoration (Tons dourados/amarelados suaves) -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-yellow-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+    </div>
 
     <!-- Header -->
-    <header class="p-6 flex justify-between items-center border-b border-yellow-500/30 bg-black sticky top-0 z-10">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showView('home-view')">
-            <!-- Coruja Tática SVG -->
-            <svg class="w-10 h-10 text-yellow-500" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 2.5c2.5 0 4.8 1.5 6 3.5-1.2 2-3.5 3.5-6 3.5s-4.8-1.5-6-3.5c1.2-2 3.5-3.5 6-3.5zm-3.5 4c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm7 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-3.5 4.5c1.4 0 2.8.5 4 1.5v2c-1.2 1-2.6 1.5-4 1.5s-2.8-.5-4-1.5v-2c1.2-1 2.6-1.5 4-1.5z"/>
+    <header class="w-full glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-[0_4px_20px_-10px_rgba(234,179,8,0.3)]">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="app.navigate('home')">
+            <!-- Ícone Coruja Tática / Militar -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]">
+                <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M7 10l2.5 1.5L12 9l2.5 2.5L17 10l-2 3h-6l-2-3z" fill="currentColor"/>
+                <path d="M11 14h2l-1 3-1-3z" fill="currentColor"/>
             </svg>
-            <h1 class="text-2xl font-bold tracking-wider text-yellow-500 uppercase">Mentoria PMMA 26</h1>
+            <h1 class="text-xl font-bold tracking-wider text-white">Mentoria <span class="text-yellow-500">PMMA 26</span></h1>
         </div>
-        <button onclick="app.showView('admin-login-view')" class="text-sm text-yellow-500/50 hover:text-yellow-500 transition">Acesso da Equipe</button>
+        <nav class="hidden md:flex gap-4 items-center">
+            <button onclick="app.navigate('home')" class="hover:text-yellow-500 text-gray-300 transition-colors">Início</button>
+            <button onclick="app.navigate('student-login')" class="hover:text-yellow-500 text-gray-300 transition-colors">Área do Aluno</button>
+            <div class="h-4 w-px bg-zinc-700 mx-2"></div>
+            <button onclick="app.navigate('admin-login')" class="hover:text-yellow-500 text-gray-300 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-crown text-yellow-600"></i> Área da Equipe
+            </button>
+        </nav>
+        <div class="md:hidden flex gap-4">
+            <button onclick="app.navigate('student-login')" class="text-gray-300 hover:text-yellow-500"><i class="fa-solid fa-user"></i></button>
+            <button onclick="app.navigate('admin-login')" class="text-yellow-600 hover:text-yellow-500"><i class="fa-solid fa-crown"></i></button>
+        </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center p-4">
+    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-5xl mx-auto">
         
-        <!-- View: Home -->
-        <div id="home-view" class="w-full max-w-md text-center space-y-8 fade-in">
-            <h2 class="text-4xl font-bold">Corujão de Legislação</h2>
-            <p class="text-gray-400">Aulas extras exclusivas para sua aprovação. Vagas estritamente limitadas.</p>
-            
-            <div class="glass-panel p-6 rounded-2xl">
-                <div class="flex justify-between text-sm mb-2 text-yellow-500 font-bold">
-                    <span>Vagas Preenchidas</span>
-                    <span id="spots-counter">0/100</span>
+        <!-- Toast Container -->
+        <div id="toast-container"></div>
+
+        <!-- Home Section -->
+        <section id="view-home" class="view-section active w-full">
+            <div class="text-center mb-12">
+                <div class="inline-block p-4 rounded-full bg-yellow-900/20 mb-4 border border-yellow-500/20">
+                    <i class="fa-solid fa-scale-balanced text-4xl text-yellow-500"></i>
                 </div>
-                <div class="w-full bg-zinc-800 rounded-full h-4 mb-6">
-                    <div id="spots-bar" class="bg-yellow-500 h-4 rounded-full transition-all duration-1000" style="width: 0%"></div>
-                </div>
-                
-                <div class="space-y-4">
-                    <button id="btn-register" onclick="app.showView('registration-view')" class="w-full btn-primary py-3 rounded-lg text-lg uppercase tracking-wider">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">Mentoria PMMA 26</h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Prepare-se conosco nesta madrugada de estudos intensos. Vagas limitadas para garantir a qualidade da transmissão e materiais.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center text-center border-t-4 border-t-yellow-500 shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                    <i class="fa-solid fa-ticket text-3xl mb-4 text-yellow-500"></i>
+                    <h3 class="text-2xl font-semibold mb-2 text-white">Inscrição</h3>
+                    <p class="text-gray-400 mb-6">Participe por um valor simbólico.</p>
+                    
+                    <div class="w-full bg-black border border-zinc-800 rounded-full h-4 mb-2 overflow-hidden">
+                        <div id="spots-progress" class="bg-yellow-500 h-4 transition-all duration-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-6"><span id="spots-count" class="font-bold text-yellow-500">0</span> / 100 vagas preenchidas</p>
+
+                    <button id="btn-start-register" onclick="app.navigate('register')" class="w-full py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
                         Garantir Minha Vaga
                     </button>
-                    <button onclick="app.showView('student-login-view')" class="w-full btn-secondary py-3 rounded-lg uppercase tracking-wider">
-                        Já sou aluno (Acessar)
+                    <p id="msg-sold-out" class="hidden text-red-500 font-semibold mt-4">Vagas esgotadas!</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center text-center border-t-4 border-t-zinc-700 hover:border-t-yellow-500 transition-colors">
+                    <i class="fa-solid fa-user-graduate text-3xl mb-4 text-gray-300"></i>
+                    <h3 class="text-2xl font-semibold mb-2 text-white">Já sou inscrito</h3>
+                    <p class="text-gray-400 mb-6">Acesse o link da aula e baixe o material disponibilizado pelo professor.</p>
+                    <button onclick="app.navigate('student-login')" class="mt-auto w-full py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-yellow-500 border border-yellow-500/30 font-bold rounded-lg transition-colors">
+                        Acessar Área do Aluno
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- View: Registration -->
-        <div id="registration-view" class="w-full max-w-md hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl">
-                <h3 class="text-2xl font-bold mb-6 text-center text-yellow-500">Formulário de Inscrição</h3>
-                <form id="reg-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-300">Nome Completo</label>
-                        <input type="text" id="reg-name" required class="w-full input-field p-3 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-300">E-mail</label>
-                        <input type="email" id="reg-email" required class="w-full input-field p-3 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-300">WhatsApp (com DDD)</label>
-                        <input type="tel" id="reg-phone" required class="w-full input-field p-3 rounded-lg">
-                    </div>
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-300">Comprovante de Pagamento (Imagem ou PDF - Máx 800KB)</label>
-                        <input type="file" id="reg-file" accept=".jpg,.jpeg,.png,.pdf" required class="w-full input-field p-2 rounded-lg text-sm">
-                    </div>
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg mt-4 text-lg">Finalizar Inscrição</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm">Voltar</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- View: Student Login -->
-        <div id="student-login-view" class="w-full max-w-md hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl">
-                <h3 class="text-2xl font-bold mb-6 text-center text-yellow-500">Acesso do Aluno</h3>
-                <p class="text-sm text-gray-400 mb-6 text-center">Digite o e-mail cadastrado na inscrição para acessar o material e o link da aula.</p>
-                <form id="student-login-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm mb-1 text-gray-300">E-mail Cadastrado</label>
-                        <input type="email" id="login-email" required class="w-full input-field p-3 rounded-lg">
-                    </div>
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg mt-4">Acessar Área Restrita</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm">Voltar</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- View: Student Dashboard -->
-        <div id="student-dashboard-view" class="w-full max-w-2xl hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl space-y-6 text-center">
-                <h3 class="text-3xl font-bold text-yellow-500">Bem-vindo, Futuro Policial!</h3>
-                <p class="text-gray-300">Aqui estão os recursos exclusivos do seu Corujão.</p>
+        <!-- Registration Section -->
+        <section id="view-register" class="view-section w-full max-w-md mx-auto">
+            <div class="glass-panel p-8 rounded-2xl shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-yellow-500 mb-6 flex items-center gap-2 transition-colors"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2 text-white">Ficha de Inscrição</h2>
                 
-                <div class="grid md:grid-cols-2 gap-4 mt-8">
-                    <div class="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
-                        <svg class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        <h4 class="font-bold mb-2">Sala de Aula Virtual</h4>
-                        <a href="#" id="student-meeting-link" target="_blank" class="inline-block btn-primary px-6 py-2 rounded text-sm pointer-events-none opacity-50">Link Indisponível</a>
+                <form id="register-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nome Completo</label>
+                        <input type="text" id="reg-name" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="Seu nome">
                     </div>
-                    <div class="bg-zinc-800 p-6 rounded-xl border border-zinc-700">
-                        <svg class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <h4 class="font-bold mb-2">Material de Apoio</h4>
-                        <a href="#" id="student-material-link" download="Material_Corujao.pdf" class="inline-block btn-primary px-6 py-2 rounded text-sm pointer-events-none opacity-50">Material Indisponível</a>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">E-mail</label>
+                        <input type="email" id="reg-email" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="seu@email.com">
+                        <p class="text-xs text-gray-500 mt-1">Será usado para acessar a plataforma depois.</p>
                     </div>
-                </div>
-                <button onclick="app.logoutStudent()" class="text-sm text-red-500 hover:text-red-400 mt-8 underline">Sair</button>
-            </div>
-        </div>
-
-        <!-- View: Admin Login -->
-        <div id="admin-login-view" class="w-full max-w-sm hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl">
-                <h3 class="text-2xl font-bold mb-6 text-center text-yellow-500">Acesso Restrito</h3>
-                <form id="admin-login-form" class="space-y-4">
-                    <input type="text" id="admin-user" placeholder="Usuário" required class="w-full input-field p-3 rounded-lg">
-                    <input type="password" id="admin-pass" placeholder="Senha" required class="w-full input-field p-3 rounded-lg">
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg mt-2">Entrar no Painel</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm">Cancelar</button>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">WhatsApp</label>
+                        <input type="text" id="reg-phone" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="(11) 99999-9999">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Comprovante de Pagamento (Imagem/PDF)</label>
+                        <input type="file" id="reg-receipt" accept="image/*,.pdf" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                        <p class="text-xs text-yellow-600 mt-1">Tamanho máximo: 800KB</p>
+                    </div>
+                    
+                    <button type="submit" id="btn-submit-reg" class="w-full py-3 mt-6 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors flex justify-center items-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        <span>Confirmar Inscrição</span>
+                        <i id="reg-spinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+                    </button>
                 </form>
             </div>
-        </div>
+        </section>
 
-        <!-- View: Admin Dashboard -->
-        <div id="admin-dashboard-view" class="w-full max-w-5xl hidden fade-in space-y-6">
-            <div class="flex justify-between items-end">
-                <h2 class="text-3xl font-bold text-yellow-500">Painel de Gestão</h2>
-                <button onclick="app.logoutAdmin()" class="btn-secondary px-4 py-2 rounded text-sm">Sair do Painel</button>
+        <!-- Student Login -->
+        <section id="view-student-login" class="view-section w-full max-w-md mx-auto">
+            <div class="glass-panel p-8 rounded-2xl text-center border-t-2 border-zinc-700">
+                <i class="fa-solid fa-user-lock text-4xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2 text-white">Acesso do Aluno</h2>
+                <p class="text-gray-400 mb-6 text-sm">Digite o e-mail usado na inscrição.</p>
+                
+                <form id="student-login-form" class="space-y-4">
+                    <input type="email" id="login-email" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center text-lg" placeholder="seu@email.com">
+                    <button type="submit" id="btn-student-login" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        Acessar
+                    </button>
+                </form>
+                <button onclick="app.navigate('home')" class="mt-4 text-sm text-gray-500 hover:text-yellow-500 transition-colors">Voltar ao Início</button>
             </div>
+        </section>
 
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Painel de Arquivos -->
-                <div class="glass-panel p-6 rounded-2xl md:col-span-1 space-y-4">
-                    <h3 class="font-bold text-lg text-yellow-500 border-b border-zinc-700 pb-2">Configurar Aula</h3>
-                    
-                    <div class="bg-zinc-800 p-3 rounded text-sm">
-                        <p class="text-gray-400 text-xs mb-1">Status Atual:</p>
-                        <p class="truncate" id="admin-current-link">Link: <span class="text-red-400">Nenhum</span></p>
-                        <p class="truncate" id="admin-current-file">Material: <span class="text-red-400">Nenhum</span></p>
+        <!-- Student Dashboard -->
+        <section id="view-student-dash" class="view-section w-full max-w-2xl mx-auto">
+            <div class="glass-panel p-8 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Sala de Aula</h2>
+                        <p class="text-gray-400">Bem-vindo(a), <span id="dash-student-name" class="text-yellow-500 font-semibold"></span></p>
                     </div>
-
-                    <form id="admin-upload-form" class="space-y-4">
-                        <div>
-                            <label class="block text-xs mb-1 text-gray-400">Link da Reunião (Zoom/Meet)</label>
-                            <input type="url" id="admin-link" class="w-full input-field p-2 rounded text-sm" placeholder="https://...">
-                        </div>
-                        <div>
-                            <label class="block text-xs mb-1 text-gray-400">Material de Estudo (PDF/Docx)</label>
-                            <input type="file" id="admin-file" class="w-full input-field p-2 rounded text-xs">
-                        </div>
-                        <button type="submit" class="w-full btn-primary py-2 rounded text-sm font-bold">Salvar e Disponibilizar</button>
-                    </form>
+                    <button onclick="app.logoutStudent()" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
                 </div>
 
-                <!-- Tabela de Alunos -->
-                <div class="glass-panel p-6 rounded-2xl md:col-span-2 flex flex-col h-[500px]">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-bold text-lg text-yellow-500">Lista de Inscritos</h3>
-                        <span id="admin-spots-counter" class="bg-zinc-800 text-yellow-500 px-3 py-1 rounded-full text-sm font-bold">0/100</span>
+                <div class="space-y-6">
+                    <div class="bg-black p-6 rounded-xl border border-zinc-800 flex flex-col md:flex-row items-center gap-6 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+                                <i class="fa-solid fa-video text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-white">Link da Transmissão</h3>
+                                <p class="text-sm text-gray-400" id="dash-meeting-status">Aguardando professor...</p>
+                            </div>
+                        </div>
+                        <a href="#" target="_blank" id="btn-meeting-link" class="hidden px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors whitespace-nowrap shadow-[0_0_10px_rgba(234,179,8,0.3)]">
+                            Entrar na Aula
+                        </a>
                     </div>
-                    <div class="overflow-y-auto flex-grow pr-2">
-                        <table class="w-full text-left text-sm">
-                            <thead class="bg-zinc-800 sticky top-0">
-                                <tr>
-                                    <th class="p-3 text-yellow-500 rounded-tl">#</th>
-                                    <th class="p-3 text-yellow-500">Nome</th>
-                                    <th class="p-3 text-yellow-500">E-mail</th>
-                                    <th class="p-3 text-yellow-500">WhatsApp</th>
-                                    <th class="p-3 text-yellow-500 rounded-tr text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-table-body" class="divide-y divide-zinc-800">
-                                <!-- Preenchido via JS -->
-                            </tbody>
-                        </table>
+
+                    <div class="bg-black p-6 rounded-xl border border-zinc-800 flex flex-col md:flex-row items-center gap-6 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+                                <i class="fa-solid fa-file-pdf text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-white">Material de Apoio</h3>
+                                <p class="text-sm text-gray-400" id="dash-material-status">Nenhum material postado ainda.</p>
+                            </div>
+                        </div>
+                        <a href="#" id="btn-download-material" download="Material_Corujao.pdf" class="hidden px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors whitespace-nowrap shadow-[0_0_10px_rgba(234,179,8,0.3)]">
+                            <i class="fa-solid fa-download mr-2"></i> Baixar PDF
+                        </a>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
+        <!-- Admin/Staff Login -->
+        <section id="view-admin-login" class="view-section w-full max-w-sm mx-auto">
+            <div class="glass-panel p-8 rounded-2xl text-center border-t-4 border-yellow-500 shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                <i class="fa-solid fa-crown text-4xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2 text-white">Acesso da Equipe</h2>
+                <p class="text-gray-400 mb-6 text-sm">Acesso restrito (Professor / Suporte).</p>
+                
+                <form id="admin-login-form" class="space-y-4">
+                    <input type="text" id="admin-user" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center" placeholder="Usuário">
+                    <input type="password" id="admin-pwd" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center" placeholder="Senha">
+                    <button type="submit" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section id="view-admin-dash" class="view-section w-full max-w-5xl mx-auto">
+            <div class="glass-panel p-6 rounded-2xl mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center border-b border-zinc-800 pb-4 mb-4 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-shield-halved mr-2"></i>Área de Gestão (<span id="admin-dash-role" class="text-white">Equipe</span>)</h2>
+                        <p class="text-sm text-gray-400">Gerencie links, materiais e visualize os inscritos.</p>
+                    </div>
+                    <button onclick="app.navigate('home')" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded text-sm text-gray-300 transition-colors"><i class="fa-solid fa-home mr-2"></i>Sair do Painel</button>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Configurações do Evento -->
+                    <div class="bg-black p-5 rounded-xl border border-zinc-800">
+                        <h3 class="font-semibold text-lg mb-4 text-white border-b border-zinc-800 pb-2">Painel de Transmissão</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Link da Reunião (Zoom/Meet/YouTube)</label>
+                                <p class="text-xs mb-2 text-gray-500">Link atual: <span id="admin-current-link" class="text-gray-400 font-medium">Nenhum link configurado</span></p>
+                                <div class="flex gap-2">
+                                    <input type="url" id="admin-meeting-link" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" placeholder="Cole o link aqui">
+                                    <button onclick="app.updateMeetingLink()" class="px-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-sm font-bold transition-colors">Salvar</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Upload de Material (PDF)</label>
+                                <p class="text-xs mb-2 text-gray-500">Arquivo atual: <span id="admin-current-material" class="text-gray-400 font-medium">Nenhum material anexado</span></p>
+                                <div class="flex gap-2">
+                                    <input type="file" id="admin-material-file" accept=".pdf" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-1.5 text-sm text-gray-300 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                                    <button onclick="app.uploadMaterial()" class="px-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-sm font-bold transition-colors flex items-center gap-2">
+                                        <span id="btn-upload-txt">Enviar</span>
+                                        <i id="upload-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Substitui o material anterior. Máx 800KB.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="bg-black p-5 rounded-xl border border-zinc-800 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                        <i class="fa-solid fa-users absolute text-9xl text-zinc-900/50 -right-4 -bottom-4"></i>
+                        <h3 class="font-semibold text-lg text-white mb-2 relative z-10">Total de Inscritos</h3>
+                        <div class="text-5xl font-bold text-yellow-500 my-4 relative z-10" id="admin-total-count">0</div>
+                        <p class="text-sm text-gray-400 relative z-10">Capacidade máxima: 100 alunos</p>
+                        <div class="w-full bg-zinc-900 rounded-full h-3 mt-4 overflow-hidden max-w-xs border border-zinc-800 relative z-10">
+                            <div id="admin-progress-bar" class="bg-yellow-500 h-3 shadow-[0_0_10px_rgba(234,179,8,0.8)]" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Alunos -->
+            <div class="glass-panel p-0 rounded-2xl overflow-hidden flex flex-col border border-zinc-800" style="max-height: 60vh;">
+                <div class="p-6 pb-2 border-b border-zinc-800">
+                    <h3 class="font-semibold text-lg text-white">Lista de Inscritos (Sigilosa)</h3>
+                </div>
+                <div class="overflow-auto flex-grow p-0">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-zinc-900 sticky top-0 z-10 text-sm uppercase text-gray-400 border-b border-zinc-800">
+                            <tr>
+                                <th class="p-3 font-medium text-center w-12 text-yellow-500">#</th>
+                                <th class="p-3 font-medium">Nome</th>
+                                <th class="p-3 font-medium">E-mail</th>
+                                <th class="p-3 font-medium">WhatsApp</th>
+                                <th class="p-3 font-medium text-center">Comprovante</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-list" class="text-sm divide-y divide-zinc-800 bg-black/50">
+                            <!-- Populated via JS -->
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500">Carregando dados...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Modal: View Proof -->
-    <div id="proof-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 p-4">
-        <div class="glass-panel w-full max-w-2xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-4 border-b border-zinc-700 flex justify-between items-center bg-black">
-                <h3 class="font-bold text-yellow-500">Comprovante de Pagamento</h3>
-                <button onclick="app.closeProof()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+    <!-- Modal for viewing receipt -->
+    <div id="receipt-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-zinc-900 border border-yellow-500/30 rounded-xl p-4 max-w-3xl w-full max-h-[90vh] flex flex-col shadow-[0_0_40px_rgba(234,179,8,0.15)]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-yellow-500">Comprovante</h3>
+                <button onclick="document.getElementById('receipt-modal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
             </div>
-            <div class="p-4 flex-grow overflow-auto flex justify-center items-center bg-zinc-900" id="proof-container">
-                <!-- Conteúdo injetado via JS -->
+            <div class="flex-grow overflow-auto bg-black rounded-lg flex items-center justify-center min-h-[300px] border border-zinc-800">
+                <iframe id="receipt-viewer" class="w-full h-[60vh] hidden" frameborder="0"></iframe>
+                <img id="receipt-img-viewer" class="max-w-full max-h-[60vh] object-contain hidden" />
             </div>
         </div>
     </div>
 
-    <!-- Modal: Excluir Aluno (Suporte) -->
-    <div id="delete-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 p-4">
-        <div class="glass-panel w-full max-w-sm rounded-2xl overflow-hidden flex flex-col p-6 text-center space-y-4">
-            <svg class="w-16 h-16 text-red-500 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            <h3 class="font-bold text-xl text-white">Atenção!</h3>
-            <p class="text-gray-400 text-sm">Tem certeza que deseja excluir este aluno? Uma vaga será liberada imediatamente. Esta ação não pode ser desfeita.</p>
-            <div class="flex gap-2 mt-4">
-                <button onclick="app.closeDeleteModal()" class="flex-1 py-2 rounded bg-zinc-700 text-white hover:bg-zinc-600 transition">Cancelar</button>
-                <button onclick="app.executeDelete()" class="flex-1 py-2 rounded bg-red-600 text-white font-bold hover:bg-red-700 transition">Sim, Excluir</button>
-            </div>
-        </div>
-    </div>
+    <footer class="text-center py-6 text-sm text-gray-600 relative z-10">
+        <p>&copy; 2026 Mentoria PMMA 26. Todos os direitos reservados.</p>
+    </footer>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // =======================================================================
-        // COLOQUE SUAS CHAVES DO FIREBASE AQUI ANTES DE SUBIR NO VERCEL
-        // =======================================================================
+        /* =====================================================================
+           CONFIGURAÇÃO PARA PRODUÇÃO (DEPLOY NO VERCEL)
+           ===================================================================== 
+           1. Crie um projeto gratuito em: console.firebase.google.com
+           2. Ative o "Firestore Database" (inicie em Modo de Teste)
+           3. Ative o "Authentication" e habilite "Anônimo" (Anonymous)
+           4. Copie as chaves do seu projeto e cole no objeto abaixo:
+        ======================================================================== */
         const PRODUCTION_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAEjBx4O2Bub7A0FK7xjvkChwA3x2aCNIU",
             authDomain: "mentoria-pmma.firebaseapp.com",
             projectId: "mentoria-pmma",
-            storageBucket: "mentoria-pmma.firebasestorage.app",
+            storageBucket: "mentoria-pmma.firebasestorage.ap",
             messagingSenderId: "961531782513",
             appId: "1:961531782513:web:ed1221f896d1e58d3382d0"
         };
-        // =======================================================================
 
-        const appFirebase = initializeApp(PRODUCTION_FIREBASE_CONFIG);
-        const db = getFirestore(appFirebase);
+        // Detecta automaticamente se está no ambiente de testes ou em produção (Vercel)
+        const isCanvas = typeof __firebase_config !== 'undefined';
+        const firebaseConfig = isCanvas ? JSON.parse(__firebase_config) : PRODUCTION_FIREBASE_CONFIG;
+        const appId = isCanvas ? __app_id : 'mentoria-pmma-26-producao';
+        
+        const fApp = initializeApp(firebaseConfig);
+        const db = getFirestore(fApp);
+        const auth = getAuth(fApp);
 
         window.app = {
-            state: { students: [], link: '', material: '' },
-            currentAdminRole: null, // 'professor' ou 'suporte'
-            studentToDelete: null,
-            MAX_STUDENTS: 100,
+            maxSpots: 100,
+            registrations: [],
+            configData: {},
+            currentStudentEmail: null,
+            unsubscribeRegs: null,
+            unsubscribeConfig: null,
 
-            showView: (viewId) => {
-                document.querySelectorAll('main > div').forEach(el => el.classList.add('hidden'));
-                document.getElementById(viewId).classList.remove('hidden');
+            showToast: (msg, type = 'info') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = msg;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            },
+            
+            navigate: (viewId) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+                window.scrollTo(0, 0);
             },
 
-            fileToBase64: (file) => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = error => reject(error);
-                });
-            },
+            fileToBase64: (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            }),
 
-            setupListeners: () => {
-                // Listener de alunos
-                onSnapshot(query(collection(db, "students"), orderBy("timestamp", "asc")), (snapshot) => {
-                    app.state.students = [];
-                    snapshot.forEach((doc) => {
-                        app.state.students.push({ id: doc.id, ...doc.data() });
-                    });
-                    app.updateUI();
-                    if(app.currentAdminRole) app.updateAdminTable();
-                });
-
-                // Listener de configurações (Link e Material)
-                onSnapshot(doc(db, "settings", "main"), (docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        app.state.link = data.link || '';
-                        app.state.material = data.material || '';
-                        app.updateDashboardStatus();
+            init: async () => {
+                try {
+                    // Se estiver em produção (Vercel), usa login anônimo padrão.
+                    if (isCanvas && typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
                     }
-                });
+                    
+                    app.refs = {
+                        registrations: collection(db, 'artifacts', appId, 'public', 'data', 'registrations'),
+                        config: doc(db, 'artifacts', appId, 'public', 'data', 'config', 'main')
+                    };
+
+                    app.listenToData();
+                    app.setupEventListeners();
+                } catch (e) {
+                    console.error("Firebase init error:", e);
+                    app.showToast("Erro ao conectar no banco de dados.", "error");
+                }
             },
 
-            updateUI: () => {
-                const count = app.state.students.length;
-                document.getElementById('spots-counter').innerText = `${count}/${app.MAX_STUDENTS}`;
-                document.getElementById('spots-bar').style.width = `${(count / app.MAX_STUDENTS) * 100}%`;
-                
-                const btnReg = document.getElementById('btn-register');
-                if (count >= app.MAX_STUDENTS) {
-                    btnReg.disabled = true;
-                    btnReg.innerText = "Vagas Esgotadas";
-                    btnReg.classList.replace('btn-primary', 'bg-zinc-700');
-                    btnReg.classList.add('text-gray-500', 'cursor-not-allowed');
+            listenToData: () => {
+                app.unsubscribeConfig = onSnapshot(app.refs.config, (docSnap) => {
+                    if (docSnap.exists()) {
+                        app.configData = docSnap.data();
+                        app.updateStudentDashboardUI();
+                        app.updateAdminDashboardUI();
+                    } else {
+                        setDoc(app.refs.config, { meetingLink: "", materialBase64: "", materialName: "" });
+                    }
+                }, (error) => console.error("Config Listener Error:", error));
+
+                app.unsubscribeRegs = onSnapshot(app.refs.registrations, (querySnapshot) => {
+                    app.registrations = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    app.updateHomeStats();
+                    app.updateAdminTable();
+                }, (error) => console.error("Registrations Listener Error:", error));
+            },
+
+            updateHomeStats: () => {
+                const count = app.registrations.length;
+                const countEl = document.getElementById('spots-count');
+                const progressEl = document.getElementById('spots-progress');
+                const btnStart = document.getElementById('btn-start-register');
+                const msgSoldOut = document.getElementById('msg-sold-out');
+
+                countEl.textContent = count;
+                const percent = Math.min((count / app.maxSpots) * 100, 100);
+                progressEl.style.width = `${percent}%`;
+
+                if (count >= app.maxSpots) {
+                    btnStart.disabled = true;
+                    btnStart.classList.add('opacity-50', 'cursor-not-allowed');
+                    msgSoldOut.classList.remove('hidden');
                 } else {
-                    btnReg.disabled = false;
-                    btnReg.innerText = "Garantir Minha Vaga";
-                    btnReg.classList.replace('bg-zinc-700', 'btn-primary');
-                    btnReg.classList.remove('text-gray-500', 'cursor-not-allowed');
+                    btnStart.disabled = false;
+                    btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+                    msgSoldOut.classList.add('hidden');
+                }
+
+                document.getElementById('admin-total-count').textContent = count;
+                document.getElementById('admin-progress-bar').style.width = `${percent}%`;
+            },
+
+            updateStudentDashboardUI: () => {
+                const linkEl = document.getElementById('btn-meeting-link');
+                const statusEl = document.getElementById('dash-meeting-status');
+                
+                if (app.configData.meetingLink && app.configData.meetingLink.startsWith('http')) {
+                    linkEl.href = app.configData.meetingLink;
+                    linkEl.classList.remove('hidden');
+                    statusEl.textContent = "Sala disponível para acesso.";
+                    statusEl.classList.add('text-yellow-500');
+                } else {
+                    linkEl.classList.add('hidden');
+                    statusEl.textContent = "Aguardando link do professor...";
+                    statusEl.classList.remove('text-yellow-500');
+                }
+
+                const matEl = document.getElementById('btn-download-material');
+                const matStatusEl = document.getElementById('dash-material-status');
+
+                if (app.configData.materialBase64) {
+                    matEl.href = app.configData.materialBase64;
+                    matEl.download = app.configData.materialName || "Material_Corujao.pdf";
+                    matEl.classList.remove('hidden');
+                    matStatusEl.textContent = `Disponível: ${app.configData.materialName || 'Arquivo PDF'}`;
+                } else {
+                    matEl.classList.add('hidden');
+                    matStatusEl.textContent = "Nenhum material postado ainda.";
                 }
             },
 
-            updateDashboardStatus: () => {
-                // Atualiza painel do professor
+            updateAdminDashboardUI: () => {
                 const linkLabel = document.getElementById('admin-current-link');
-                const fileLabel = document.getElementById('admin-current-file');
-                if(app.state.link) linkLabel.innerHTML = `Link: <a href="${app.state.link}" target="_blank" class="text-blue-400 underline">Ativo</a>`;
-                if(app.state.material) fileLabel.innerHTML = `Material: <span class="text-green-400">Disponível</span>`;
-
-                // Atualiza painel do aluno
-                const aLink = document.getElementById('student-meeting-link');
-                const aFile = document.getElementById('student-material-link');
-                
-                if (app.state.link) {
-                    aLink.href = app.state.link;
-                    aLink.classList.remove('pointer-events-none', 'opacity-50');
-                    aLink.innerText = "Entrar na Aula";
+                if (app.configData.meetingLink) {
+                    linkLabel.textContent = app.configData.meetingLink;
+                    linkLabel.className = 'text-yellow-500 font-medium break-all';
+                } else {
+                    linkLabel.textContent = "Nenhum link configurado";
+                    linkLabel.className = 'text-gray-500 font-medium';
                 }
-                if (app.state.material) {
-                    aFile.href = app.state.material;
-                    aFile.classList.remove('pointer-events-none', 'opacity-50');
-                    aFile.innerText = "Baixar Material";
+
+                const matLabel = document.getElementById('admin-current-material');
+                if (app.configData.materialName) {
+                    matLabel.textContent = app.configData.materialName;
+                    matLabel.className = 'text-yellow-500 font-medium break-all';
+                } else {
+                    matLabel.textContent = "Nenhum material anexado";
+                    matLabel.className = 'text-gray-500 font-medium';
                 }
             },
 
             updateAdminTable: () => {
-                const tbody = document.getElementById('admin-table-body');
-                tbody.innerHTML = '';
-                document.getElementById('admin-spots-counter').innerText = `${app.state.students.length}/${app.MAX_STUDENTS}`;
-
-                app.state.students.forEach((student, index) => {
-                    const tr = document.createElement('tr');
-                    
-                    // Botão de Deletar SÓ APARECE PARA O SUPORTE
-                    let actionButtons = `<button onclick="app.viewProof('${student.id}')" class="btn-secondary px-3 py-1 rounded text-xs">Ver Comprovante</button>`;
-                    if(app.currentAdminRole === 'suporte') {
-                        actionButtons += `<button onclick="app.confirmDelete('${student.id}')" class="btn-danger px-3 py-1 rounded text-xs ml-2" title="Excluir Aluno">Excluir</button>`;
-                    }
-
-                    tr.innerHTML = `
-                        <td class="p-3 text-gray-400">${index + 1}</td>
-                        <td class="p-3 font-medium">${student.name}</td>
-                        <td class="p-3 text-gray-400">${student.email}</td>
-                        <td class="p-3 text-gray-400">${student.phone}</td>
-                        <td class="p-3 text-right">${actionButtons}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            },
-
-            viewProof: (id) => {
-                const student = app.state.students.find(s => s.id === id);
-                if (!student || !student.proof) return;
-
-                const container = document.getElementById('proof-container');
-                container.innerHTML = '';
-
-                if (student.proof.startsWith('data:image')) {
-                    const img = document.createElement('img');
-                    img.src = student.proof;
-                    img.className = "max-w-full max-h-[70vh] object-contain rounded";
-                    container.appendChild(img);
-                } else if (student.proof.startsWith('data:application/pdf')) {
-                    const iframe = document.createElement('iframe');
-                    iframe.src = student.proof;
-                    iframe.className = "w-full h-[70vh] rounded bg-white";
-                    container.appendChild(iframe);
+                const tbody = document.getElementById('admin-students-list');
+                if (app.registrations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Nenhum inscrito ainda.</td></tr>';
+                    return;
                 }
 
-                document.getElementById('proof-modal').classList.remove('hidden');
-            },
+                const sorted = [...app.registrations].sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
 
-            closeProof: () => {
-                document.getElementById('proof-modal').classList.add('hidden');
-            },
-
-            // FUNÇÕES DE EXCLUSÃO (SUPORTE)
-            confirmDelete: (id) => {
-                app.studentToDelete = id;
-                document.getElementById('delete-modal').classList.remove('hidden');
-            },
-
-            executeDelete: async () => {
-                if(app.studentToDelete) {
-                    try {
-                        await deleteDoc(doc(db, "students", app.studentToDelete));
-                        app.closeDeleteModal();
-                    } catch(e) {
-                        alert("Erro ao excluir aluno. Verifique a conexão.");
-                    }
-                }
-            },
-
-            closeDeleteModal: () => {
-                app.studentToDelete = null;
-                document.getElementById('delete-modal').classList.add('hidden');
-            },
-
-            logoutAdmin: () => {
-                app.currentAdminRole = null;
-                app.showView('home-view');
-            },
-
-            logoutStudent: () => {
-                app.showView('home-view');
+                tbody.innerHTML = sorted.map((student, index) => `
+                    <tr class="hover:bg-zinc-800/80 transition-colors">
+                        <td class="p-3 text-yellow-500 text-center font-mono font-bold">${index + 1}</td>
+                        <td class="p-3 text-white font-medium">${student.name || 'Sem nome'}</td>
+                        <td class="p-3 text-gray-400">${student.email || 'Sem email'}</td>
+                        <td class="p-3 text-gray-400">${student.phone || 'N/A'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="app.viewReceipt('${student.id}')" class="text-black bg-yellow-500 hover:bg-yellow-400 px-3 py-1 rounded text-xs font-bold transition-colors">
+                                <i class="fa-solid fa-eye mr-1"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
             },
 
             setupEventListeners: () => {
-                // Inscrição
-                document.getElementById('reg-form').addEventListener('submit', async (e) => {
+                document.getElementById('register-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
-                    if (app.state.students.length >= app.MAX_STUDENTS) return alert("Vagas esgotadas!");
+                    if (app.registrations.length >= app.maxSpots) {
+                        app.showToast("Vagas esgotadas!", "error");
+                        return;
+                    }
 
-                    const btn = e.target.querySelector('button[type="submit"]');
+                    const btn = document.getElementById('btn-submit-reg');
+                    const spinner = document.getElementById('reg-spinner');
+                    const fileInput = document.getElementById('reg-receipt');
+                    const file = fileInput.files[0];
+
+                    if (!file) {
+                        app.showToast("Selecione o comprovante.", "warning"); return;
+                    }
+                    if (file.size > 800 * 1024) { 
+                        app.showToast("O arquivo deve ter no máximo 800KB.", "warning"); return;
+                    }
+
+                    const emailInput = document.getElementById('reg-email').value.trim().toLowerCase();
+                    
+                    if (app.registrations.some(r => r.email === emailInput)) {
+                        app.showToast("Este e-mail já está inscrito!", "error");
+                        return;
+                    }
+
                     btn.disabled = true;
-                    btn.innerText = "Processando...";
+                    spinner.classList.remove('hidden');
 
                     try {
-                        const file = document.getElementById('reg-file').files[0];
-                        if (file.size > 800 * 1024) throw new Error("Arquivo muito grande. Máximo 800KB.");
-                        
-                        const base64File = await app.fileToBase64(file);
-                        
-                        await addDoc(collection(db, "students"), {
-                            name: document.getElementById('reg-name').value,
-                            email: document.getElementById('reg-email').value.toLowerCase(),
-                            phone: document.getElementById('reg-phone').value,
-                            proof: base64File,
+                        const base64Str = await app.fileToBase64(file);
+                        const docData = {
+                            name: document.getElementById('reg-name').value.trim(),
+                            email: emailInput,
+                            phone: document.getElementById('reg-phone').value.trim(),
+                            receiptBase64: base64Str,
                             timestamp: Date.now()
-                        });
+                        };
 
-                        alert("Inscrição confirmada com sucesso!");
-                        e.target.reset();
-                        app.showView('home-view');
+                        await addDoc(app.refs.registrations, docData);
+                        
+                        app.showToast("Inscrição confirmada com sucesso!", "success");
+                        document.getElementById('register-form').reset();
+                        app.navigate('home');
                     } catch (error) {
-                        alert("Erro: " + error.message);
+                        console.error("Erro na inscrição:", error);
+                        app.showToast("Erro ao processar inscrição. Tente novamente.", "error");
                     } finally {
                         btn.disabled = false;
-                        btn.innerText = "Finalizar Inscrição";
+                        spinner.classList.add('hidden');
                     }
                 });
 
-                // Login Admin
-                document.getElementById('admin-login-form').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const user = document.getElementById('admin-user').value;
-                    const pass = document.getElementById('admin-pass').value;
-
-                    if (user === 'suporte' && pass === 'supmentor26') {
-                        app.currentAdminRole = 'suporte';
-                        app.updateAdminTable();
-                        app.showView('admin-dashboard-view');
-                        e.target.reset();
-                    } else if (user === 'rafaelfranco' && pass === 'mentorpm26') {
-                        app.currentAdminRole = 'professor';
-                        app.updateAdminTable();
-                        app.showView('admin-dashboard-view');
-                        e.target.reset();
-                    } else {
-                        alert("Credenciais inválidas!");
-                    }
-                });
-
-                // Login Aluno
                 document.getElementById('student-login-form').addEventListener('submit', (e) => {
                     e.preventDefault();
-                    const email = document.getElementById('login-email').value.toLowerCase();
-                    const isStudent = app.state.students.some(s => s.email === email);
+                    const email = document.getElementById('login-email').value.trim().toLowerCase();
+                    const student = app.registrations.find(r => r.email === email);
                     
-                    if (isStudent) {
-                        app.showView('student-dashboard-view');
-                        e.target.reset();
+                    if (student) {
+                        app.currentStudentEmail = email;
+                        document.getElementById('dash-student-name').textContent = student.name;
+                        app.updateStudentDashboardUI();
+                        app.navigate('student-dash');
+                        app.showToast(`Bem-vindo, ${student.name.split(' ')[0]}!`, "success");
                     } else {
-                        alert("E-mail não encontrado na lista de inscritos.");
+                        app.showToast("E-mail não encontrado na lista de inscritos.", "error");
                     }
                 });
 
-                // Upload Admin
-                document.getElementById('admin-upload-form').addEventListener('submit', async (e) => {
+                document.getElementById('admin-login-form').addEventListener('submit', (e) => {
                     e.preventDefault();
-                    const btn = e.target.querySelector('button[type="submit"]');
-                    btn.disabled = true;
-                    btn.innerText = "Salvando...";
+                    const user = document.getElementById('admin-user').value.trim().toLowerCase();
+                    const pwd = document.getElementById('admin-pwd').value;
+                    
+                    const isProfessor = (user === 'rafaelfranco' && pwd === 'mentorpm26');
+                    const isSupport = (user === 'suporte' && pwd === 'supmentor26');
 
-                    try {
-                        const link = document.getElementById('admin-link').value;
-                        const fileInput = document.getElementById('admin-file');
+                    if (isProfessor || isSupport) {
+                        document.getElementById('admin-pwd').value = '';
+                        document.getElementById('admin-meeting-link').value = app.configData.meetingLink || '';
                         
-                        let payload = {};
-                        if (link) payload.link = link;
+                        const roleName = isProfessor ? 'Professor' : 'Suporte';
+                        document.getElementById('admin-dash-role').textContent = roleName;
                         
-                        if (fileInput.files.length > 0) {
-                            payload.material = await app.fileToBase64(fileInput.files[0]);
-                        }
-
-                        if(Object.keys(payload).length > 0) {
-                            await updateDoc(doc(db, "settings", "main"), payload).catch(async () => {
-                                // Cria se não existir
-                                await addDoc(collection(db, "settings"), payload); // fallback rudimentar
-                                // Correção ideal: o firebase cria se usar setDoc com {merge: true}, mas updateDoc exige doc existente.
-                                // Para simplificar este proto, assumimos que 'main' existe ou lidamos no Firebase.
-                            });
-                            alert("Dados atualizados para os alunos!");
-                            e.target.reset();
-                        }
-                    } catch (error) {
-                        alert("Erro ao salvar dados.");
-                    } finally {
-                        btn.disabled = false;
-                        btn.innerText = "Salvar e Disponibilizar";
+                        app.updateAdminDashboardUI();
+                        app.navigate('admin-dash');
+                        app.showToast(`Acesso Liberado: ${roleName}`, "success");
+                    } else {
+                        app.showToast("Usuário ou senha incorretos.", "error");
                     }
                 });
+            },
+
+            logoutStudent: () => {
+            app.currentStudentEmail = null;
+            document.getElementById('login-email').value = '';
+            app.navigate('home');
+        },
+
+        logoutAdmin: () => {
+            app.adminRole = null;
+            app.navigate('home');
+        },
+
+        confirmDeleteStudent: (id, name) => {
+            app.studentToDelete = id;
+            document.getElementById('delete-student-name').textContent = name;
+            document.getElementById('delete-modal').classList.remove('hidden');
+        },
+
+        deleteStudent: async () => {
+            if (!app.studentToDelete) return;
+            try {
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'registrations', app.studentToDelete);
+                await deleteDoc(docRef);
+                app.showToast("Aluno excluído e vaga liberada!", "success");
+            } catch (error) {
+                console.error("Erro ao excluir:", error);
+                app.showToast("Erro ao excluir aluno.", "error");
+            } finally {
+                document.getElementById('delete-modal').classList.add('hidden');
+                app.studentToDelete = null;
+            }
+        },
+
+        updateMeetingLink: async () => {
+            const link = document.getElementById('admin-meeting-link').value.trim();
+                try {
+                    await setDoc(app.refs.config, { meetingLink: link }, { merge: true });
+                    app.showToast("Link atualizado!", "success");
+                } catch (error) {
+                    app.showToast("Erro ao salvar link.", "error");
+                }
+            },
+
+            uploadMaterial: async () => {
+                const fileInput = document.getElementById('admin-material-file');
+                const file = fileInput.files[0];
+                if (!file) {
+                    app.showToast("Selecione um PDF.", "warning"); return;
+                }
+                if (file.size > 800 * 1024) {
+                    app.showToast("O PDF deve ter no máximo 800KB.", "error"); return;
+                }
+
+                const txt = document.getElementById('btn-upload-txt');
+                const spin = document.getElementById('upload-spinner');
+                txt.textContent = "Enviando...";
+                spin.classList.remove('hidden');
+
+                try {
+                    const base64Str = await app.fileToBase64(file);
+                    await setDoc(app.refs.config, { 
+                        materialBase64: base64Str,
+                        materialName: file.name
+                    }, { merge: true });
+                    app.showToast("Material enviado com sucesso!", "success");
+                    fileInput.value = '';
+                } catch (error) {
+                    console.error("Upload error:", error);
+                    app.showToast("Erro ao enviar arquivo.", "error");
+                } finally {
+                    txt.textContent = "Enviar";
+                    spin.classList.add('hidden');
+                }
+            },
+
+            viewReceipt: (docId) => {
+                const student = app.registrations.find(r => r.id === docId);
+                if (!student || !student.receiptBase64) return;
+
+                const isPdf = student.receiptBase64.includes('application/pdf');
+                const iframe = document.getElementById('receipt-viewer');
+                const img = document.getElementById('receipt-img-viewer');
+
+                if (isPdf) {
+                    img.classList.add('hidden');
+                    iframe.src = student.receiptBase64;
+                    iframe.classList.remove('hidden');
+                } else {
+                    iframe.classList.add('hidden');
+                    img.src = student.receiptBase64;
+                    img.classList.remove('hidden');
+                }
+
+                document.getElementById('receipt-modal').classList.remove('hidden');
             }
         };
 
-        // Iniciar App
-        app.setupListeners();
-        app.setupEventListeners();
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
     </script>
 </body>
 </html>
