@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentoria PMMA 26</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000; /* Fundo totalmente preto */
+            color: #f8fafc;
+        }
+        /* Custom scrollbar for tables */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111111; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #eab308; /* Dourado */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ca8a04; 
+        }
+        
+        .glass-panel {
+            background: rgba(20, 20, 20, 0.85); /* Fundo quase preto */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(234, 179, 8, 0.2); /* Borda levemente dourada */
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Toast notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 12px 24px;
+            border-radius: 8px;
+            background: #18181b; /* Zinc 900 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(234, 179, 8, 0.1);
+            animation: slideIn 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards;
+            opacity: 0;
+            transform: translateX(100%);
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+        .toast.success { border-left: 4px solid #eab308; } /* Dourado */
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.warning { border-left: 4px solid #eab308; }
+
+        @keyframes slideIn {
+            to { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(100%); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <!-- Background Decoration (Tons dourados/amarelados suaves) -->
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-yellow-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-900 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="w-full glass-panel sticky top-0 z-40 px-6 py-4 flex justify-between items-center shadow-[0_4px_20px_-10px_rgba(234,179,8,0.3)]">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="app.navigate('home')">
+            <!-- Ícone Coruja Tática / Militar -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-8 h-8 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]">
+                <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                <path d="M7 10l2.5 1.5L12 9l2.5 2.5L17 10l-2 3h-6l-2-3z" fill="currentColor"/>
+                <path d="M11 14h2l-1 3-1-3z" fill="currentColor"/>
+            </svg>
+            <h1 class="text-xl font-bold tracking-wider text-white">Mentoria <span class="text-yellow-500">PMMA 26</span></h1>
+        </div>
+        <nav class="hidden md:flex gap-4 items-center">
+            <button onclick="app.navigate('home')" class="hover:text-yellow-500 text-gray-300 transition-colors">Início</button>
+            <button onclick="app.navigate('student-login')" class="hover:text-yellow-500 text-gray-300 transition-colors">Área do Aluno</button>
+            <div class="h-4 w-px bg-zinc-700 mx-2"></div>
+            <button onclick="app.navigate('admin-login')" class="hover:text-yellow-500 text-gray-300 transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-crown text-yellow-600"></i> Área da Equipe
+            </button>
+        </nav>
+        <div class="md:hidden flex gap-4">
+            <button onclick="app.navigate('student-login')" class="text-gray-300 hover:text-yellow-500"><i class="fa-solid fa-user"></i></button>
+            <button onclick="app.navigate('admin-login')" class="text-yellow-600 hover:text-yellow-500"><i class="fa-solid fa-crown"></i></button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-4 w-full max-w-5xl mx-auto">
+        
+        <!-- Toast Container -->
+        <div id="toast-container"></div>
+
+        <!-- Home Section -->
+        <section id="view-home" class="view-section active w-full">
+            <div class="text-center mb-12">
+                <div class="inline-block p-4 rounded-full bg-yellow-900/20 mb-4 border border-yellow-500/20">
+                    <i class="fa-solid fa-scale-balanced text-4xl text-yellow-500"></i>
+                </div>
+                <h2 class="text-4xl md:text-5xl font-bold mb-4 text-white">Mentoria PMMA 26</h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto">Prepare-se conosco nesta madrugada de estudos intensos. Vagas limitadas para garantir a qualidade da transmissão e materiais.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center text-center border-t-4 border-t-yellow-500 shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                    <i class="fa-solid fa-ticket text-3xl mb-4 text-yellow-500"></i>
+                    <h3 class="text-2xl font-semibold mb-2 text-white">Inscrição</h3>
+                    <p class="text-gray-400 mb-6">Participe por um valor simbólico.</p>
+                    
+                    <div class="w-full bg-black border border-zinc-800 rounded-full h-4 mb-2 overflow-hidden">
+                        <div id="spots-progress" class="bg-yellow-500 h-4 transition-all duration-500 shadow-[0_0_10px_rgba(234,179,8,0.8)]" style="width: 0%"></div>
+                    </div>
+                    <p class="text-sm text-gray-400 mb-6"><span id="spots-count" class="font-bold text-yellow-500">0</span> / 100 vagas preenchidas</p>
+
+                    <button id="btn-start-register" onclick="app.navigate('register')" class="w-full py-3 px-6 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        Garantir Minha Vaga
+                    </button>
+                    <p id="msg-sold-out" class="hidden text-red-500 font-semibold mt-4">Vagas esgotadas!</p>
+                </div>
+
+                <div class="glass-panel p-8 rounded-2xl flex flex-col items-center text-center border-t-4 border-t-zinc-700 hover:border-t-yellow-500 transition-colors">
+                    <i class="fa-solid fa-user-graduate text-3xl mb-4 text-gray-300"></i>
+                    <h3 class="text-2xl font-semibold mb-2 text-white">Já sou inscrito</h3>
+                    <p class="text-gray-400 mb-6">Acesse o link da aula e baixe o material disponibilizado pelo professor.</p>
+                    <button onclick="app.navigate('student-login')" class="mt-auto w-full py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-yellow-500 border border-yellow-500/30 font-bold rounded-lg transition-colors">
+                        Acessar Área do Aluno
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registration Section -->
+        <section id="view-register" class="view-section w-full max-w-md mx-auto">
+            <div class="glass-panel p-8 rounded-2xl shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                <button onclick="app.navigate('home')" class="text-gray-400 hover:text-yellow-500 mb-6 flex items-center gap-2 transition-colors"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
+                <h2 class="text-2xl font-bold mb-6 border-b border-zinc-800 pb-2 text-white">Ficha de Inscrição</h2>
+                
+                <form id="register-form" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Nome Completo</label>
+                        <input type="text" id="reg-name" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="Seu nome">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">E-mail</label>
+                        <input type="email" id="reg-email" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="seu@email.com">
+                        <p class="text-xs text-gray-500 mt-1">Será usado para acessar a plataforma depois.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">WhatsApp</label>
+                        <input type="text" id="reg-phone" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500" placeholder="(11) 99999-9999">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-400 mb-1">Comprovante de Pagamento (Imagem/PDF)</label>
+                        <input type="file" id="reg-receipt" accept="image/*,.pdf" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-2 text-gray-300 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                        <p class="text-xs text-yellow-600 mt-1">Tamanho máximo: 800KB</p>
+                    </div>
+                    
+                    <button type="submit" id="btn-submit-reg" class="w-full py-3 mt-6 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors flex justify-center items-center gap-2 shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        <span>Confirmar Inscrição</span>
+                        <i id="reg-spinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Student Login -->
+        <section id="view-student-login" class="view-section w-full max-w-md mx-auto">
+            <div class="glass-panel p-8 rounded-2xl text-center border-t-2 border-zinc-700">
+                <i class="fa-solid fa-user-lock text-4xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2 text-white">Acesso do Aluno</h2>
+                <p class="text-gray-400 mb-6 text-sm">Digite o e-mail usado na inscrição.</p>
+                
+                <form id="student-login-form" class="space-y-4">
+                    <input type="email" id="login-email" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center text-lg" placeholder="seu@email.com">
+                    <button type="submit" id="btn-student-login" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        Acessar
+                    </button>
+                </form>
+                <button onclick="app.navigate('home')" class="mt-4 text-sm text-gray-500 hover:text-yellow-500 transition-colors">Voltar ao Início</button>
+            </div>
+        </section>
+
+        <!-- Student Dashboard -->
+        <section id="view-student-dash" class="view-section w-full max-w-2xl mx-auto">
+            <div class="glass-panel p-8 rounded-2xl">
+                <div class="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-white">Sala de Aula</h2>
+                        <p class="text-gray-400">Bem-vindo(a), <span id="dash-student-name" class="text-yellow-500 font-semibold"></span></p>
+                    </div>
+                    <button onclick="app.logoutStudent()" class="text-gray-500 hover:text-red-500 transition-colors"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-black p-6 rounded-xl border border-zinc-800 flex flex-col md:flex-row items-center gap-6 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+                                <i class="fa-solid fa-video text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-white">Link da Transmissão</h3>
+                                <p class="text-sm text-gray-400" id="dash-meeting-status">Aguardando professor...</p>
+                            </div>
+                        </div>
+                        <a href="#" target="_blank" id="btn-meeting-link" class="hidden px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors whitespace-nowrap shadow-[0_0_10px_rgba(234,179,8,0.3)]">
+                            Entrar na Aula
+                        </a>
+                    </div>
+
+                    <div class="bg-black p-6 rounded-xl border border-zinc-800 flex flex-col md:flex-row items-center gap-6 justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 border border-yellow-500/20">
+                                <i class="fa-solid fa-file-pdf text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-lg text-white">Material de Apoio</h3>
+                                <p class="text-sm text-gray-400" id="dash-material-status">Nenhum material postado ainda.</p>
+                            </div>
+                        </div>
+                        <a href="#" id="btn-download-material" download="Material_Corujao.pdf" class="hidden px-6 py-2 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors whitespace-nowrap shadow-[0_0_10px_rgba(234,179,8,0.3)]">
+                            <i class="fa-solid fa-download mr-2"></i> Baixar PDF
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Admin/Staff Login -->
+        <section id="view-admin-login" class="view-section w-full max-w-sm mx-auto">
+            <div class="glass-panel p-8 rounded-2xl text-center border-t-4 border-yellow-500 shadow-[0_0_30px_-10px_rgba(234,179,8,0.2)]">
+                <i class="fa-solid fa-crown text-4xl text-yellow-500 mb-4"></i>
+                <h2 class="text-2xl font-bold mb-2 text-white">Acesso da Equipe</h2>
+                <p class="text-gray-400 mb-6 text-sm">Acesso restrito (Professor / Suporte).</p>
+                
+                <form id="admin-login-form" class="space-y-4">
+                    <input type="text" id="admin-user" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center" placeholder="Usuário">
+                    <input type="password" id="admin-pwd" required class="w-full bg-black border border-zinc-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-yellow-500 text-center" placeholder="Senha">
+                    <button type="submit" class="w-full py-3 bg-yellow-500 hover:bg-yellow-400 text-black font-bold rounded-lg transition-colors shadow-[0_0_15px_rgba(234,179,8,0.4)]">
+                        Entrar
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Admin Dashboard -->
+        <section id="view-admin-dash" class="view-section w-full max-w-5xl mx-auto">
+            <div class="glass-panel p-6 rounded-2xl mb-6">
+                <div class="flex flex-col md:flex-row justify-between items-center border-b border-zinc-800 pb-4 mb-4 gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-yellow-500"><i class="fa-solid fa-shield-halved mr-2"></i>Área de Gestão (<span id="admin-dash-role" class="text-white">Equipe</span>)</h2>
+                        <p class="text-sm text-gray-400">Gerencie links, materiais e visualize os inscritos.</p>
+                    </div>
+                    <button onclick="app.navigate('home')" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 rounded text-sm text-gray-300 transition-colors"><i class="fa-solid fa-home mr-2"></i>Sair do Painel</button>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <!-- Configurações do Evento -->
+                    <div class="bg-black p-5 rounded-xl border border-zinc-800">
+                        <h3 class="font-semibold text-lg mb-4 text-white border-b border-zinc-800 pb-2">Painel de Transmissão</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Link da Reunião (Zoom/Meet/YouTube)</label>
+                                <p class="text-xs mb-2 text-gray-500">Link atual: <span id="admin-current-link" class="text-gray-400 font-medium">Nenhum link configurado</span></p>
+                                <div class="flex gap-2">
+                                    <input type="url" id="admin-meeting-link" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" placeholder="https://...">
+                                    <button onclick="app.updateMeetingLink()" class="px-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-sm font-bold transition-colors">Salvar</button>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-400 mb-1">Upload de Material (PDF)</label>
+                                <p class="text-xs mb-2 text-gray-500">Arquivo atual: <span id="admin-current-material" class="text-gray-400 font-medium">Nenhum material anexado</span></p>
+                                <div class="flex gap-2">
+                                    <input type="file" id="admin-material-file" accept=".pdf" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-1.5 text-sm text-gray-300 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                                    <button onclick="app.uploadMaterial()" class="px-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-sm font-bold transition-colors flex items-center gap-2">
+                                        <span id="btn-upload-txt">Enviar</span>
+                                        <i id="upload-spinner" class="fa-solid fa-spinner fa-spin hidden"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Substitui o material anterior. Máx 800KB.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div class="bg-black p-5 rounded-xl border border-zinc-800 flex flex-col justify-center items-center text-center relative overflow-hidden">
+                        <i class="fa-solid fa-users absolute text-9xl text-zinc-900/50 -right-4 -bottom-4"></i>
+                        <h3 class="font-semibold text-lg text-white mb-2 relative z-10">Total de Inscritos</h3>
+                        <div class="text-5xl font-bold text-yellow-500 my-4 relative z-10" id="admin-total-count">0</div>
+                        <p class="text-sm text-gray-400 relative z-10">Capacidade máxima: 100 alunos</p>
+                        <div class="w-full bg-zinc-900 rounded-full h-3 mt-4 overflow-hidden max-w-xs border border-zinc-800 relative z-10">
+                            <div id="admin-progress-bar" class="bg-yellow-500 h-3 shadow-[0_0_10px_rgba(234,179,8,0.8)]" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de Alunos -->
+            <div class="glass-panel p-0 rounded-2xl overflow-hidden flex flex-col border border-zinc-800" style="max-height: 60vh;">
+                <div class="p-6 pb-2 border-b border-zinc-800">
+                    <h3 class="font-semibold text-lg text-white">Lista de Inscritos (Sigilosa)</h3>
+                </div>
+                <div class="overflow-auto flex-grow p-0">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-zinc-900 sticky top-0 z-10 text-sm uppercase text-gray-400 border-b border-zinc-800">
+                            <tr>
+                                <th class="p-3 font-medium text-center w-12 text-yellow-500">#</th>
+                                <th class="p-3 font-medium">Nome</th>
+                                <th class="p-3 font-medium">E-mail</th>
+                                <th class="p-3 font-medium">WhatsApp</th>
+                                <th class="p-3 font-medium text-center">Comprovante</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-list" class="text-sm divide-y divide-zinc-800 bg-black/50">
+                            <!-- Populated via JS -->
+                            <tr><td colspan="5" class="p-4 text-center text-gray-500">Carregando dados...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal for viewing receipt -->
+    <div id="receipt-modal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="bg-zinc-900 border border-yellow-500/30 rounded-xl p-4 max-w-3xl w-full max-h-[90vh] flex flex-col shadow-[0_0_40px_rgba(234,179,8,0.15)]">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-yellow-500">Comprovante</h3>
+                <button onclick="document.getElementById('receipt-modal').classList.add('hidden')" class="text-gray-400 hover:text-white text-2xl transition-colors">&times;</button>
+            </div>
+            <div class="flex-grow overflow-auto bg-black rounded-lg flex items-center justify-center min-h-[300px] border border-zinc-800">
+                <iframe id="receipt-viewer" class="w-full h-[60vh] hidden" frameborder="0"></iframe>
+                <img id="receipt-img-viewer" class="max-w-full max-h-[60vh] object-contain hidden" />
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center py-6 text-sm text-gray-600 relative z-10">
+        <p>&copy; 2026 Mentoria PMMA 26. Todos os direitos reservados.</p>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        /* =====================================================================
+           CONFIGURAÇÃO PARA PRODUÇÃO (DEPLOY NO VERCEL)
+           ===================================================================== 
+           1. Crie um projeto gratuito em: console.firebase.google.com
+           2. Ative o "Firestore Database" (inicie em Modo de Teste)
+           3. Ative o "Authentication" e habilite "Anônimo" (Anonymous)
+           4. Copie as chaves do seu projeto e cole no objeto abaixo:
+        ======================================================================== */
+        const PRODUCTION_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAEjBx4O2Bub7A0FK7xjvkChwA3x2aCNIU",
+            authDomain: "mentoria-pmma.firebaseapp.com",
+            projectId: "mentoria-pmma",
+            storageBucket: "mentoria-pmma.firebasestorage.app",
+            messagingSenderId: "1961531782513",
+            appId: "1:961531782513:web:ed1221f896d1e58d3382d0"
+        };
+
+        // Detecta automaticamente se está no ambiente de testes ou em produção (Vercel)
+        const isCanvas = typeof __firebase_config !== 'undefined';
+        const firebaseConfig = isCanvas ? JSON.parse(__firebase_config) : PRODUCTION_FIREBASE_CONFIG;
+        const appId = isCanvas ? __app_id : 'mentoria-pmma-26-producao';
+        
+        const fApp = initializeApp(firebaseConfig);
+        const db = getFirestore(fApp);
+        const auth = getAuth(fApp);
+
+        window.app = {
+            maxSpots: 100,
+            registrations: [],
+            configData: {},
+            currentStudentEmail: null,
+            unsubscribeRegs: null,
+            unsubscribeConfig: null,
+
+            showToast: (msg, type = 'info') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = msg;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            },
+            
+            navigate: (viewId) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+                document.getElementById(`view-${viewId}`).classList.add('active');
+                window.scrollTo(0, 0);
+            },
+
+            fileToBase64: (file) => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            }),
+
+            init: async () => {
+                try {
+                    // Se estiver em produção (Vercel), usa login anônimo padrão.
+                    if (isCanvas && typeof __initial_auth_token !== 'undefined') {
+                        await signInWithCustomToken(auth, __initial_auth_token);
+                    } else {
+                        await signInAnonymously(auth);
+                    }
+                    
+                    app.refs = {
+                        registrations: collection(db, 'artifacts', appId, 'public', 'data', 'registrations'),
+                        config: doc(db, 'artifacts', appId, 'public', 'data', 'config', 'main')
+                    };
+
+                    app.listenToData();
+                    app.setupEventListeners();
+                } catch (e) {
+                    console.error("Firebase init error:", e);
+                    app.showToast("Erro ao conectar no banco de dados.", "error");
+                }
+            },
+
+            listenToData: () => {
+                app.unsubscribeConfig = onSnapshot(app.refs.config, (docSnap) => {
+                    if (docSnap.exists()) {
+                        app.configData = docSnap.data();
+                        app.updateStudentDashboardUI();
+                        app.updateAdminDashboardUI();
+                    } else {
+                        setDoc(app.refs.config, { meetingLink: "", materialBase64: "", materialName: "" });
+                    }
+                }, (error) => console.error("Config Listener Error:", error));
+
+                app.unsubscribeRegs = onSnapshot(app.refs.registrations, (querySnapshot) => {
+                    app.registrations = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    app.updateHomeStats();
+                    app.updateAdminTable();
+                }, (error) => console.error("Registrations Listener Error:", error));
+            },
+
+            updateHomeStats: () => {
+                const count = app.registrations.length;
+                const countEl = document.getElementById('spots-count');
+                const progressEl = document.getElementById('spots-progress');
+                const btnStart = document.getElementById('btn-start-register');
+                const msgSoldOut = document.getElementById('msg-sold-out');
+
+                countEl.textContent = count;
+                const percent = Math.min((count / app.maxSpots) * 100, 100);
+                progressEl.style.width = `${percent}%`;
+
+                if (count >= app.maxSpots) {
+                    btnStart.disabled = true;
+                    btnStart.classList.add('opacity-50', 'cursor-not-allowed');
+                    msgSoldOut.classList.remove('hidden');
+                } else {
+                    btnStart.disabled = false;
+                    btnStart.classList.remove('opacity-50', 'cursor-not-allowed');
+                    msgSoldOut.classList.add('hidden');
+                }
+
+                document.getElementById('admin-total-count').textContent = count;
+                document.getElementById('admin-progress-bar').style.width = `${percent}%`;
+            },
+
+            updateStudentDashboardUI: () => {
+                const linkEl = document.getElementById('btn-meeting-link');
+                const statusEl = document.getElementById('dash-meeting-status');
+                
+                if (app.configData.meetingLink && app.configData.meetingLink.startsWith('http')) {
+                    linkEl.href = app.configData.meetingLink;
+                    linkEl.classList.remove('hidden');
+                    statusEl.textContent = "Sala disponível para acesso.";
+                    statusEl.classList.add('text-yellow-500');
+                } else {
+                    linkEl.classList.add('hidden');
+                    statusEl.textContent = "Aguardando link do professor...";
+                    statusEl.classList.remove('text-yellow-500');
+                }
+
+                const matEl = document.getElementById('btn-download-material');
+                const matStatusEl = document.getElementById('dash-material-status');
+
+                if (app.configData.materialBase64) {
+                    matEl.href = app.configData.materialBase64;
+                    matEl.download = app.configData.materialName || "Material_Corujao.pdf";
+                    matEl.classList.remove('hidden');
+                    matStatusEl.textContent = `Disponível: ${app.configData.materialName || 'Arquivo PDF'}`;
+                } else {
+                    matEl.classList.add('hidden');
+                    matStatusEl.textContent = "Nenhum material postado ainda.";
+                }
+            },
+
+            updateAdminDashboardUI: () => {
+                const linkLabel = document.getElementById('admin-current-link');
+                if (app.configData.meetingLink) {
+                    linkLabel.textContent = app.configData.meetingLink;
+                    linkLabel.className = 'text-yellow-500 font-medium break-all';
+                } else {
+                    linkLabel.textContent = "Nenhum link configurado";
+                    linkLabel.className = 'text-gray-500 font-medium';
+                }
+
+                const matLabel = document.getElementById('admin-current-material');
+                if (app.configData.materialName) {
+                    matLabel.textContent = app.configData.materialName;
+                    matLabel.className = 'text-yellow-500 font-medium break-all';
+                } else {
+                    matLabel.textContent = "Nenhum material anexado";
+                    matLabel.className = 'text-gray-500 font-medium';
+                }
+            },
+
+            updateAdminTable: () => {
+                const tbody = document.getElementById('admin-students-list');
+                if (app.registrations.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-gray-500">Nenhum inscrito ainda.</td></tr>';
+                    return;
+                }
+
+                const sorted = [...app.registrations].sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+
+                tbody.innerHTML = sorted.map((student, index) => `
+                    <tr class="hover:bg-zinc-800/80 transition-colors">
+                        <td class="p-3 text-yellow-500 text-center font-mono font-bold">${index + 1}</td>
+                        <td class="p-3 text-white font-medium">${student.name || 'Sem nome'}</td>
+                        <td class="p-3 text-gray-400">${student.email || 'Sem email'}</td>
+                        <td class="p-3 text-gray-400">${student.phone || 'N/A'}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="app.viewReceipt('${student.id}')" class="text-black bg-yellow-500 hover:bg-yellow-400 px-3 py-1 rounded text-xs font-bold transition-colors">
+                                <i class="fa-solid fa-eye mr-1"></i> Ver
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            },
+
+            setupEventListeners: () => {
+                document.getElementById('register-form').addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (app.registrations.length >= app.maxSpots) {
+                        app.showToast("Vagas esgotadas!", "error");
+                        return;
+                    }
+
+                    const btn = document.getElementById('btn-submit-reg');
+                    const spinner = document.getElementById('reg-spinner');
+                    const fileInput = document.getElementById('reg-receipt');
+                    const file = fileInput.files[0];
+
+                    if (!file) {
+                        app.showToast("Selecione o comprovante.", "warning"); return;
+                    }
+                    if (file.size > 800 * 1024) { 
+                        app.showToast("O arquivo deve ter no máximo 800KB.", "warning"); return;
+                    }
+
+                    const emailInput = document.getElementById('reg-email').value.trim().toLowerCase();
+                    
+                    if (app.registrations.some(r => r.email === emailInput)) {
+                        app.showToast("Este e-mail já está inscrito!", "error");
+                        return;
+                    }
+
+                    btn.disabled = true;
+                    spinner.classList.remove('hidden');
+
+                    try {
+                        const base64Str = await app.fileToBase64(file);
+                        const docData = {
+                            name: document.getElementById('reg-name').value.trim(),
+                            email: emailInput,
+                            phone: document.getElementById('reg-phone').value.trim(),
+                            receiptBase64: base64Str,
+                            timestamp: Date.now()
+                        };
+
+                        await addDoc(app.refs.registrations, docData);
+                        
+                        app.showToast("Inscrição confirmada com sucesso!", "success");
+                        document.getElementById('register-form').reset();
+                        app.navigate('home');
+                    } catch (error) {
+                        console.error("Erro na inscrição:", error);
+                        app.showToast("Erro ao processar inscrição. Tente novamente.", "error");
+                    } finally {
+                        btn.disabled = false;
+                        spinner.classList.add('hidden');
+                    }
+                });
+
+                document.getElementById('student-login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const email = document.getElementById('login-email').value.trim().toLowerCase();
+                    const student = app.registrations.find(r => r.email === email);
+                    
+                    if (student) {
+                        app.currentStudentEmail = email;
+                        document.getElementById('dash-student-name').textContent = student.name;
+                        app.updateStudentDashboardUI();
+                        app.navigate('student-dash');
+                        app.showToast(`Bem-vindo, ${student.name.split(' ')[0]}!`, "success");
+                    } else {
+                        app.showToast("E-mail não encontrado na lista de inscritos.", "error");
+                    }
+                });
+
+                document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const user = document.getElementById('admin-user').value.trim().toLowerCase();
+                    const pwd = document.getElementById('admin-pwd').value;
+                    
+                    const isProfessor = (user === 'professor' && pwd === 'professor123');
+                    const isSupport = (user === 'suporte' && pwd === 'suporte123');
+
+                    if (isProfessor || isSupport) {
+                        document.getElementById('admin-pwd').value = '';
+                        document.getElementById('admin-meeting-link').value = app.configData.meetingLink || '';
+                        
+                        const roleName = isProfessor ? 'Professor' : 'Suporte';
+                        document.getElementById('admin-dash-role').textContent = roleName;
+                        
+                        app.updateAdminDashboardUI();
+                        app.navigate('admin-dash');
+                        app.showToast(`Acesso Liberado: ${roleName}`, "success");
+                    } else {
+                        app.showToast("Usuário ou senha incorretos.", "error");
+                    }
+                });
+            },
+
+            logoutStudent: () => {
+                app.currentStudentEmail = null;
+                document.getElementById('login-email').value = '';
+                app.navigate('home');
+            },
+
+            updateMeetingLink: async () => {
+                const link = document.getElementById('admin-meeting-link').value.trim();
+                try {
+                    await setDoc(app.refs.config, { meetingLink: link }, { merge: true });
+                    app.showToast("Link atualizado!", "success");
+                } catch (error) {
+                    app.showToast("Erro ao salvar link.", "error");
+                }
+            },
+
+            uploadMaterial: async () => {
+                const fileInput = document.getElementById('admin-material-file');
+                const file = fileInput.files[0];
+                if (!file) {
+                    app.showToast("Selecione um PDF.", "warning"); return;
+                }
+                if (file.size > 800 * 1024) {
+                    app.showToast("O PDF deve ter no máximo 800KB.", "error"); return;
+                }
+
+                const txt = document.getElementById('btn-upload-txt');
+                const spin = document.getElementById('upload-spinner');
+                txt.textContent = "Enviando...";
+                spin.classList.remove('hidden');
+
+                try {
+                    const base64Str = await app.fileToBase64(file);
+                    await setDoc(app.refs.config, { 
+                        materialBase64: base64Str,
+                        materialName: file.name
+                    }, { merge: true });
+                    app.showToast("Material enviado com sucesso!", "success");
+                    fileInput.value = '';
+                } catch (error) {
+                    console.error("Upload error:", error);
+                    app.showToast("Erro ao enviar arquivo.", "error");
+                } finally {
+                    txt.textContent = "Enviar";
+                    spin.classList.add('hidden');
+                }
+            },
+
+            viewReceipt: (docId) => {
+                const student = app.registrations.find(r => r.id === docId);
+                if (!student || !student.receiptBase64) return;
+
+                const isPdf = student.receiptBase64.includes('application/pdf');
+                const iframe = document.getElementById('receipt-viewer');
+                const img = document.getElementById('receipt-img-viewer');
+
+                if (isPdf) {
+                    img.classList.add('hidden');
+                    iframe.src = student.receiptBase64;
+                    iframe.classList.remove('hidden');
+                } else {
+                    iframe.classList.add('hidden');
+                    img.src = student.receiptBase64;
+                    img.classList.remove('hidden');
+                }
+
+                document.getElementById('receipt-modal').classList.remove('hidden');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>
