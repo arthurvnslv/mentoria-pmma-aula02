@@ -6,108 +6,174 @@
     <title>Mentoria PMMA 26</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
         body { 
-            background-color: #000000; 
+            background: radial-gradient(circle at top, #18181b 0%, #000000 100%);
+            background-attachment: fixed;
             color: #ffffff; 
             font-family: 'Inter', system-ui, sans-serif;
         }
+        
+        /* Efeito de Vidro Fosco (Glassmorphism) Moderno */
         .glass-panel {
-            background-color: #18181b; /* zinc-900 */
-            border: 1px solid #eab308; /* yellow-500 */
-            box-shadow: 0 4px 30px rgba(234, 179, 8, 0.1);
+            background: rgba(24, 24, 27, 0.65); /* zinc-900 translúcido */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(234, 179, 8, 0.2); /* borda dourada sutil */
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5), 0 0 20px rgba(234, 179, 8, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
+        
+        .glass-panel:hover {
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 0 0 30px rgba(234, 179, 8, 0.1);
+        }
+
+        /* Campos de Entrada Aprimorados */
         .input-field {
-            background-color: #27272a; /* zinc-800 */
-            border: 1px solid #3f3f46; /* zinc-700 */
+            background: rgba(39, 39, 42, 0.5);
+            border: 1px solid rgba(63, 63, 70, 0.8);
             color: white;
-            transition: border-color 0.3s ease;
-        }
-        .input-field:focus {
-            border-color: #eab308;
-            outline: none;
-        }
-        .btn-primary {
-            background-color: #eab308;
-            color: #000000;
-            font-weight: bold;
             transition: all 0.3s ease;
         }
+        
+        .input-field:focus {
+            border-color: #eab308;
+            background: rgba(39, 39, 42, 0.8);
+            box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.15);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        /* Botões com Efeito Tátil e Brilho (Neon) */
+        .btn-primary {
+            background: linear-gradient(135deg, #facc15 0%, #ca8a04 100%);
+            color: #000000;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.2);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
         .btn-primary:hover:not(:disabled) {
-            background-color: #ca8a04;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(234, 179, 8, 0.4);
+            filter: brightness(1.1);
         }
+        
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(234, 179, 8, 0.3);
+        }
+        
         .btn-primary:disabled {
-            opacity: 0.5;
+            background: #27272a;
+            color: #71717a;
+            box-shadow: none;
+            border: 1px solid #3f3f46;
             cursor: not-allowed;
+            text-shadow: none;
         }
+
         .btn-secondary {
-            background-color: transparent;
-            border: 1px solid #eab308;
+            background: rgba(234, 179, 8, 0.05);
+            border: 1px solid rgba(234, 179, 8, 0.5);
             color: #eab308;
             transition: all 0.3s ease;
         }
+        
         .btn-secondary:hover {
-            background-color: rgba(234, 179, 8, 0.1);
+            background: rgba(234, 179, 8, 0.15);
+            border-color: #eab308;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.15);
         }
+        
+        .btn-secondary:active {
+            transform: translateY(1px);
+        }
+
         .btn-danger {
-            background-color: transparent;
-            border: 1px solid #ef4444;
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px solid rgba(239, 68, 68, 0.5);
             color: #ef4444;
             transition: all 0.3s ease;
         }
-        .btn-danger:hover {
-            background-color: rgba(239, 68, 68, 0.1);
-        }
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #18181b; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #ca8a04; }
         
-        .fade-in {
-            animation: fadeIn 0.4s ease-in-out;
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: #ef4444;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(234, 179, 8, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(234, 179, 8, 0.6); }
+        
+        /* Animações Modernas */
+        .fade-in {
+            animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .glow-text {
+            text-shadow: 0 0 20px rgba(234, 179, 8, 0.4);
+        }
+
+        .progress-glow {
+            box-shadow: 0 0 15px rgba(234, 179, 8, 0.8), inset 0 0 5px rgba(255,255,255,0.5);
         }
     </style>
 </head>
 <body class="min-h-screen flex flex-col selection:bg-yellow-500 selection:text-black">
 
-    <!-- Header -->
-    <header class="p-4 md:p-6 flex flex-wrap gap-4 justify-between items-center border-b border-yellow-500/30 bg-black sticky top-0 z-10">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showView('home-view')">
-            <!-- Coruja Tática SVG -->
-            <svg class="w-10 h-10 text-yellow-500 drop-shadow-[0_0_8px_rgba(234,179,8,0.4)]" viewBox="0 0 24 24" fill="currentColor">
+    <!-- Header (com blur no fundo) -->
+    <header class="p-4 md:p-6 flex flex-wrap gap-4 justify-between items-center border-b border-yellow-500/20 bg-black/50 backdrop-blur-md sticky top-0 z-20 transition-all">
+        <div class="flex items-center gap-3 cursor-pointer group" onclick="app.showView('home-view')">
+            <!-- Coruja Tática SVG Animada -->
+            <svg class="w-10 h-10 text-yellow-500 transition-transform duration-300 group-hover:scale-110 drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2L3 7v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-9-5zm0 2.5c2.5 0 4.8 1.5 6 3.5-1.2 2-3.5 3.5-6 3.5s-4.8-1.5-6-3.5c1.2-2 3.5-3.5 6-3.5zm-3.5 4c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm7 0c.83 0 1.5.67 1.5 1.5s-.67 1.5-1.5 1.5-1.5-.67-1.5-1.5.67-1.5 1.5-1.5zm-3.5 4.5c1.4 0 2.8.5 4 1.5v2c-1.2 1-2.6 1.5-4 1.5s-2.8-.5-4-1.5v-2c1.2-1 2.6-1.5 4-1.5z"/>
             </svg>
-            <h1 class="text-xl md:text-2xl font-bold tracking-wider text-yellow-500 uppercase">Mentoria PMMA 26</h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 uppercase glow-text">Mentoria PMMA 26</h1>
         </div>
-        <button onclick="app.showView('admin-login-view')" class="text-xs md:text-sm text-yellow-500/50 hover:text-yellow-500 transition">Acesso da Equipe</button>
+        <button onclick="app.showView('admin-login-view')" class="text-xs md:text-sm font-medium text-yellow-500/40 hover:text-yellow-400 transition-colors">Acesso da Equipe</button>
     </header>
 
     <!-- Main Content -->
-    <main class="flex-grow flex items-center justify-center p-4">
+    <main class="flex-grow flex items-center justify-center p-4 relative z-10">
         
         <!-- View: Home -->
         <div id="home-view" class="w-full max-w-md text-center space-y-8 fade-in">
-            <h2 class="text-3xl md:text-4xl font-bold">Corujão de Legislação</h2>
-            <p class="text-gray-400">Aulas extras exclusivas para sua aprovação. Vagas estritamente limitadas.</p>
+            <div class="space-y-2">
+                <h2 class="text-4xl md:text-5xl font-extrabold tracking-tight glow-text text-white">Corujão de Legislação</h2>
+                <p class="text-zinc-400 text-sm md:text-base">Aulas extras exclusivas para sua aprovação. Vagas estritamente limitadas.</p>
+            </div>
             
-            <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
-                <div class="flex justify-between text-sm mb-2 text-yellow-500 font-bold relative z-10">
-                    <span>Vagas Preenchidas</span>
-                    <span id="spots-counter">0/100</span>
+            <div class="glass-panel p-8 rounded-3xl relative overflow-hidden">
+                <!-- Luz de fundo sutil no card -->
+                <div class="absolute -top-20 -right-20 w-40 h-40 bg-yellow-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex justify-between text-sm mb-3 text-yellow-500 font-bold relative z-10">
+                    <span class="uppercase tracking-wider text-xs">Vagas Preenchidas</span>
+                    <span id="spots-counter" class="text-base">0/100</span>
                 </div>
-                <div class="w-full bg-zinc-800 rounded-full h-4 mb-6 relative z-10 border border-zinc-700 overflow-hidden">
-                    <div id="spots-bar" class="bg-yellow-500 h-4 rounded-full transition-all duration-1000 shadow-[0_0_10px_rgba(234,179,8,0.8)]" style="width: 0%"></div>
+                <!-- Barra de Progresso com Glow -->
+                <div class="w-full bg-zinc-900 rounded-full h-3 mb-8 relative z-10 border border-zinc-800 overflow-hidden shadow-inner">
+                    <div id="spots-bar" class="bg-gradient-to-r from-yellow-600 to-yellow-400 h-full rounded-full transition-all duration-1000 ease-out progress-glow" style="width: 0%"></div>
                 </div>
                 
                 <div class="space-y-4 relative z-10">
-                    <button id="btn-register" onclick="app.showView('registration-view')" class="w-full btn-primary py-3 rounded-lg text-lg uppercase tracking-wider shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                    <button id="btn-register" onclick="app.showView('registration-view')" class="w-full btn-primary py-4 rounded-xl text-sm md:text-base uppercase tracking-widest">
                         Garantir Minha Vaga
                     </button>
-                    <button onclick="app.showView('student-login-view')" class="w-full btn-secondary py-3 rounded-lg uppercase tracking-wider">
+                    <button onclick="app.showView('student-login-view')" class="w-full btn-secondary py-3.5 rounded-xl text-sm uppercase tracking-widest font-medium">
                         Já sou aluno (Acessar)
                     </button>
                 </div>
@@ -116,143 +182,195 @@
 
         <!-- View: Registration -->
         <div id="registration-view" class="w-full max-w-md hidden fade-in">
-            <div class="glass-panel p-6 md:p-8 rounded-2xl">
-                <h3 class="text-2xl font-bold mb-6 text-center text-yellow-500">Formulário de Inscrição</h3>
-                <form id="reg-form" class="space-y-4">
+            <div class="glass-panel p-8 md:p-10 rounded-3xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600 opacity-50"></div>
+                <h3 class="text-2xl font-extrabold mb-8 text-center text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-yellow-600">Formulário de Inscrição</h3>
+                
+                <form id="reg-form" class="space-y-5 relative z-10">
                     <div>
-                        <label class="block text-sm mb-1 text-gray-300">Nome Completo</label>
-                        <input type="text" id="reg-name" required class="w-full input-field p-3 rounded-lg" placeholder="Seu nome">
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-zinc-400">Nome Completo</label>
+                        <input type="text" id="reg-name" required class="w-full input-field p-3.5 rounded-xl" placeholder="Digite seu nome">
                     </div>
                     <div>
-                        <label class="block text-sm mb-1 text-gray-300">E-mail</label>
-                        <input type="email" id="reg-email" required class="w-full input-field p-3 rounded-lg" placeholder="seu@email.com">
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-zinc-400">E-mail</label>
+                        <input type="email" id="reg-email" required class="w-full input-field p-3.5 rounded-xl" placeholder="seu@email.com">
                     </div>
                     <div>
-                        <label class="block text-sm mb-1 text-gray-300">WhatsApp (com DDD)</label>
-                        <input type="tel" id="reg-phone" required class="w-full input-field p-3 rounded-lg" placeholder="(99) 99999-9999">
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-zinc-400">WhatsApp (com DDD)</label>
+                        <input type="tel" id="reg-phone" required class="w-full input-field p-3.5 rounded-xl" placeholder="(99) 99999-9999">
                     </div>
                     <div>
-                        <label class="block text-sm mb-1 text-gray-300">Comprovante de Pagamento (Imagem/PDF)</label>
-                        <input type="file" id="reg-file" accept=".jpg,.jpeg,.png,.pdf" required class="w-full input-field p-2 rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
-                        <p class="text-xs text-yellow-600 mt-1">Tamanho máximo: 800KB</p>
+                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 text-zinc-400">Comprovante de Pagamento</label>
+                        <div class="relative">
+                            <input type="file" id="reg-file" accept=".jpg,.jpeg,.png,.pdf" required class="w-full input-field p-2.5 rounded-xl text-sm file:mr-4 file:py-2.5 file:px-5 file:rounded-lg file:border-0 file:text-xs file:font-bold file:uppercase file:tracking-wider file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 file:transition-colors file:cursor-pointer cursor-pointer text-zinc-400">
+                        </div>
+                        <p class="text-[10px] text-yellow-600/80 mt-2 uppercase tracking-wide flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Tamanho máximo: 800KB (Imagem ou PDF)
+                        </p>
                     </div>
-                    <button type="submit" id="btn-submit-reg" class="w-full btn-primary py-3 rounded-lg mt-4 text-lg">Finalizar Inscrição</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm transition">Voltar</button>
+                    <button type="submit" id="btn-submit-reg" class="w-full btn-primary py-4 rounded-xl mt-6 text-base uppercase tracking-widest shadow-lg shadow-yellow-500/20">Finalizar Inscrição</button>
+                    <button type="button" onclick="app.showView('home-view')" class="w-full text-zinc-500 hover:text-white py-3 text-sm font-medium transition-colors uppercase tracking-wider">Cancelar e Voltar</button>
                 </form>
             </div>
         </div>
 
         <!-- View: Student Login -->
         <div id="student-login-view" class="w-full max-w-md hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl text-center">
-                <svg class="w-16 h-16 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                <h3 class="text-2xl font-bold mb-2 text-yellow-500">Acesso do Aluno</h3>
-                <p class="text-sm text-gray-400 mb-6">Digite o e-mail cadastrado na inscrição para acessar o material e o link da aula.</p>
+            <div class="glass-panel p-8 md:p-10 rounded-3xl text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-yellow-500/5 to-transparent pointer-events-none"></div>
                 
-                <form id="student-login-form" class="space-y-4">
-                    <input type="email" id="login-email" required class="w-full input-field p-3 rounded-lg text-center text-lg" placeholder="seu@email.com">
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg mt-4">Acessar Área Restrita</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm transition">Voltar</button>
+                <div class="w-20 h-20 mx-auto bg-zinc-900/80 rounded-2xl flex items-center justify-center mb-6 border border-zinc-800 shadow-xl rotate-3">
+                    <svg class="w-10 h-10 text-yellow-500 -rotate-3 drop-shadow-md" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+                
+                <h3 class="text-2xl font-extrabold mb-3 text-white">Acesso do Aluno</h3>
+                <p class="text-sm text-zinc-400 mb-8 px-4">Digite o e-mail cadastrado para acessar o material de apoio e o link da aula ao vivo.</p>
+                
+                <form id="student-login-form" class="space-y-4 relative z-10">
+                    <input type="email" id="login-email" required class="w-full input-field p-4 rounded-xl text-center text-base" placeholder="seu@email.com">
+                    <button type="submit" class="w-full btn-primary py-4 rounded-xl mt-2 uppercase tracking-widest text-sm shadow-lg shadow-yellow-500/20">Acessar Área Restrita</button>
+                    <button type="button" onclick="app.showView('home-view')" class="w-full text-zinc-500 hover:text-white py-3 text-sm font-medium transition-colors uppercase tracking-wider">Voltar ao Início</button>
                 </form>
             </div>
         </div>
 
         <!-- View: Student Dashboard -->
-        <div id="student-dashboard-view" class="w-full max-w-2xl hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl space-y-6 text-center border-t-4 border-t-yellow-500">
-                <h3 class="text-3xl font-bold text-white">Bem-vindo, Futuro Policial!</h3>
-                <p class="text-gray-400">Aqui estão os recursos exclusivos do seu Corujão.</p>
+        <div id="student-dashboard-view" class="w-full max-w-3xl hidden fade-in">
+            <div class="glass-panel p-8 md:p-12 rounded-3xl space-y-8 text-center relative overflow-hidden">
+                <!-- Decorativo top -->
+                <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-yellow-500 to-transparent opacity-50"></div>
                 
-                <div class="grid md:grid-cols-2 gap-4 mt-8">
-                    <div class="bg-black p-6 rounded-xl border border-zinc-800">
-                        <svg class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
-                        <h4 class="font-bold mb-2 text-white">Sala de Aula Virtual</h4>
-                        <a href="#" id="student-meeting-link" target="_blank" class="inline-block btn-primary px-6 py-2 rounded text-sm pointer-events-none opacity-50 transition">Link Indisponível</a>
+                <div>
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-zinc-400 mb-3">Bem-vindo, Futuro Policial!</h3>
+                    <p class="text-zinc-400 text-sm md:text-base">Seu espaço exclusivo do Corujão. Prepare-se para a aprovação.</p>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mt-10">
+                    <!-- Card Reunião -->
+                    <div class="bg-black/40 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800 hover:border-yellow-500/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-2xl hover:shadow-yellow-500/5">
+                        <div class="w-16 h-16 mx-auto bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 border border-zinc-800 group-hover:border-yellow-500/50 transition-colors">
+                            <svg class="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <h4 class="font-bold text-lg mb-4 text-white">Sala de Aula Virtual</h4>
+                        <a href="#" id="student-meeting-link" target="_blank" class="block w-full btn-primary py-3 rounded-xl text-sm pointer-events-none opacity-40 transition-all uppercase tracking-wider">Link Indisponível</a>
                     </div>
-                    <div class="bg-black p-6 rounded-xl border border-zinc-800">
-                        <svg class="w-12 h-12 text-yellow-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <h4 class="font-bold mb-2 text-white">Material de Apoio</h4>
-                        <a href="#" id="student-material-link" download="Material_Corujao.pdf" class="inline-block btn-primary px-6 py-2 rounded text-sm pointer-events-none opacity-50 transition">Material Indisponível</a>
+                    
+                    <!-- Card Material -->
+                    <div class="bg-black/40 backdrop-blur-sm p-8 rounded-2xl border border-zinc-800 hover:border-yellow-500/30 transition-all duration-300 group hover:-translate-y-1 hover:shadow-2xl hover:shadow-yellow-500/5">
+                        <div class="w-16 h-16 mx-auto bg-zinc-900 rounded-2xl flex items-center justify-center mb-6 border border-zinc-800 group-hover:border-yellow-500/50 transition-colors">
+                            <svg class="w-8 h-8 text-yellow-500 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        </div>
+                        <h4 class="font-bold text-lg mb-4 text-white">Material de Apoio</h4>
+                        <a href="#" id="student-material-link" download="Material_Corujao.pdf" class="block w-full btn-primary py-3 rounded-xl text-sm pointer-events-none opacity-40 transition-all uppercase tracking-wider">Arquivo Indisponível</a>
                     </div>
                 </div>
-                <button onclick="app.logoutStudent()" class="text-sm text-red-500 hover:text-red-400 mt-8 transition flex items-center justify-center gap-2 mx-auto">
+                
+                <button onclick="app.logoutStudent()" class="text-sm text-red-400 hover:text-red-300 mt-10 transition-colors flex items-center justify-center gap-2 mx-auto font-medium py-2 px-6 rounded-full hover:bg-red-400/10">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                    Sair
+                    Encerrar Sessão
                 </button>
             </div>
         </div>
 
         <!-- View: Admin Login -->
         <div id="admin-login-view" class="w-full max-w-sm hidden fade-in">
-            <div class="glass-panel p-8 rounded-2xl border-t-4 border-zinc-700">
-                <svg class="w-16 h-16 text-zinc-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                <h3 class="text-2xl font-bold mb-6 text-center text-white">Acesso Restrito</h3>
+            <div class="glass-panel p-8 md:p-10 rounded-3xl relative overflow-hidden text-center">
+                <div class="w-16 h-16 mx-auto bg-zinc-900 rounded-full flex items-center justify-center mb-6 border border-zinc-800">
+                    <svg class="w-8 h-8 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <h3 class="text-2xl font-extrabold mb-8 text-white">Acesso Restrito</h3>
+                
                 <form id="admin-login-form" class="space-y-4">
-                    <input type="text" id="admin-user" placeholder="Usuário" required class="w-full input-field p-3 rounded-lg text-center">
-                    <input type="password" id="admin-pass" placeholder="Senha" required class="w-full input-field p-3 rounded-lg text-center">
-                    <button type="submit" class="w-full btn-primary py-3 rounded-lg mt-2">Entrar no Painel</button>
-                    <button type="button" onclick="app.showView('home-view')" class="w-full text-gray-400 hover:text-white py-2 text-sm transition">Cancelar</button>
+                    <input type="text" id="admin-user" placeholder="Usuário" required class="w-full input-field p-3.5 rounded-xl text-center">
+                    <input type="password" id="admin-pass" placeholder="Senha" required class="w-full input-field p-3.5 rounded-xl text-center">
+                    <button type="submit" class="w-full btn-primary py-4 rounded-xl mt-4 text-sm uppercase tracking-widest shadow-lg shadow-yellow-500/10">Entrar no Painel</button>
+                    <button type="button" onclick="app.showView('home-view')" class="w-full text-zinc-500 hover:text-white py-3 text-sm font-medium transition-colors uppercase tracking-wider">Cancelar</button>
                 </form>
             </div>
         </div>
 
         <!-- View: Admin Dashboard -->
-        <div id="admin-dashboard-view" class="w-full max-w-5xl hidden fade-in space-y-6">
-            <div class="flex flex-col md:flex-row justify-between items-center md:items-end gap-4 border-b border-zinc-800 pb-4">
+        <div id="admin-dashboard-view" class="w-full max-w-6xl hidden fade-in space-y-6">
+            <!-- Header do Dashboard -->
+            <div class="glass-panel p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center md:items-end gap-4">
                 <div>
-                    <h2 class="text-3xl font-bold text-yellow-500">Painel de Gestão</h2>
-                    <p class="text-gray-400 text-sm">Autenticado como: <span id="admin-role-label" class="text-white font-bold uppercase"></span></p>
+                    <h2 class="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-yellow-600 tracking-tight">Painel de Gestão</h2>
+                    <p class="text-zinc-400 text-sm mt-1">Autenticado como: <span id="admin-role-label" class="text-white font-bold uppercase tracking-wider text-xs bg-zinc-800 px-2 py-1 rounded"></span></p>
                 </div>
-                <button onclick="app.logoutAdmin()" class="btn-secondary px-4 py-2 rounded text-sm transition flex items-center gap-2">
+                <button onclick="app.logoutAdmin()" class="btn-secondary px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Sair do Painel
                 </button>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-6">
-                <!-- Painel de Arquivos -->
-                <div class="glass-panel p-6 rounded-2xl md:col-span-1 space-y-4 h-fit">
-                    <h3 class="font-bold text-lg text-white border-b border-zinc-800 pb-2">Configurar Aula</h3>
+            <div class="grid lg:grid-cols-3 gap-6">
+                <!-- Coluna 1: Configurações -->
+                <div class="glass-panel p-6 md:p-8 rounded-3xl lg:col-span-1 space-y-6 h-fit">
+                    <div class="flex items-center gap-3 border-b border-zinc-800/80 pb-4">
+                        <div class="p-2 bg-yellow-500/10 rounded-lg">
+                            <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-lg text-white">Configurar Aula</h3>
+                    </div>
                     
-                    <div class="bg-black p-4 rounded-lg border border-zinc-800 text-sm">
-                        <p class="text-gray-400 text-xs mb-2 uppercase tracking-wider font-bold">Status Atual</p>
-                        <p class="truncate mb-1" id="admin-current-link">Link: <span class="text-gray-500">Nenhum</span></p>
-                        <p class="truncate" id="admin-current-file">Material: <span class="text-gray-500">Nenhum</span></p>
+                    <div class="bg-black/50 p-5 rounded-2xl border border-zinc-800/80 text-sm shadow-inner">
+                        <p class="text-zinc-500 text-[10px] uppercase tracking-widest font-bold mb-3">Status Atual para Alunos</p>
+                        <div class="space-y-2">
+                            <p class="truncate flex items-center gap-2" id="admin-current-link">
+                                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                                <span class="text-zinc-500 italic">Link não configurado</span>
+                            </p>
+                            <p class="truncate flex items-center gap-2" id="admin-current-file">
+                                <svg class="w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <span class="text-zinc-500 italic">Material não enviado</span>
+                            </p>
+                        </div>
                     </div>
 
-                    <form id="admin-upload-form" class="space-y-4">
+                    <form id="admin-upload-form" class="space-y-5">
                         <div>
-                            <label class="block text-xs mb-1 text-gray-400">Link da Reunião (Zoom/Meet)</label>
-                            <input type="url" id="admin-link" class="w-full input-field p-2 rounded text-sm" placeholder="https://...">
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider mb-2 text-zinc-400">Link da Reunião (Zoom/Meet)</label>
+                            <input type="url" id="admin-link" class="w-full input-field p-3 rounded-xl text-sm" placeholder="Cole a URL aqui">
                         </div>
                         <div>
-                            <label class="block text-xs mb-1 text-gray-400">Novo Material de Estudo (PDF)</label>
-                            <input type="file" id="admin-file" accept=".pdf" class="w-full input-field p-2 rounded text-xs file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-xs file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
+                            <label class="block text-[11px] font-semibold uppercase tracking-wider mb-2 text-zinc-400">Novo Material (PDF)</label>
+                            <input type="file" id="admin-file" accept=".pdf" class="w-full input-field p-2.5 rounded-xl text-xs file:mr-3 file:py-1.5 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-yellow-500 file:text-black hover:file:bg-yellow-400 cursor-pointer">
                         </div>
-                        <button type="submit" id="btn-save-settings" class="w-full btn-primary py-2 rounded text-sm font-bold shadow-[0_0_10px_rgba(234,179,8,0.2)]">Salvar e Disponibilizar</button>
+                        <button type="submit" id="btn-save-settings" class="w-full btn-primary py-3.5 rounded-xl text-xs uppercase tracking-widest mt-2 shadow-lg shadow-yellow-500/10">Atualizar Plataforma</button>
                     </form>
                 </div>
 
-                <!-- Tabela de Alunos -->
-                <div class="glass-panel p-0 rounded-2xl md:col-span-2 flex flex-col h-[600px] overflow-hidden border-zinc-800">
-                    <div class="p-4 border-b border-zinc-800 flex justify-between items-center bg-black/50">
-                        <h3 class="font-bold text-lg text-white">Lista de Inscritos</h3>
-                        <span id="admin-spots-counter" class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/30 px-3 py-1 rounded-full text-sm font-bold">0/100</span>
+                <!-- Coluna 2: Tabela de Alunos -->
+                <div class="glass-panel p-0 rounded-3xl lg:col-span-2 flex flex-col h-[650px] overflow-hidden border-zinc-800/80 shadow-2xl">
+                    <div class="p-6 md:p-8 border-b border-zinc-800/80 flex justify-between items-center bg-black/20 backdrop-blur-sm">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-yellow-500/10 rounded-lg">
+                                <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                            </div>
+                            <h3 class="font-bold text-lg text-white">Lista Oficial de Inscritos</h3>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-zinc-500 uppercase tracking-widest font-semibold hidden md:inline">Ocupação</span>
+                            <span id="admin-spots-counter" class="bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 px-4 py-1.5 rounded-full text-sm font-extrabold shadow-inner shadow-yellow-500/10">0/100</span>
+                        </div>
                     </div>
-                    <div class="overflow-y-auto flex-grow bg-black/30">
-                        <table class="w-full text-left text-sm whitespace-nowrap">
-                            <thead class="bg-zinc-900 sticky top-0 z-10 text-gray-400 uppercase text-xs tracking-wider border-b border-zinc-800">
-                                <tr>
-                                    <th class="p-4 font-medium text-yellow-500">#</th>
-                                    <th class="p-4 font-medium">Nome</th>
-                                    <th class="p-4 font-medium">E-mail</th>
-                                    <th class="p-4 font-medium">WhatsApp</th>
-                                    <th class="p-4 font-medium text-right">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-table-body" class="divide-y divide-zinc-800/50">
-                                <!-- Preenchido via JS -->
-                            </tbody>
-                        </table>
+                    <div class="overflow-y-auto flex-grow bg-black/10 p-2 md:p-4">
+                        <div class="rounded-2xl overflow-hidden border border-zinc-800/50 bg-black/40 backdrop-blur-md">
+                            <table class="w-full text-left text-sm whitespace-nowrap">
+                                <thead class="bg-zinc-900/80 sticky top-0 z-10 text-zinc-400 uppercase text-[10px] tracking-widest border-b border-zinc-800">
+                                    <tr>
+                                        <th class="p-4 font-bold text-yellow-500/80 w-12 text-center">#</th>
+                                        <th class="p-4 font-bold">Nome do Aluno</th>
+                                        <th class="p-4 font-bold">Contato / E-mail</th>
+                                        <th class="p-4 font-bold text-right pr-6">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="admin-table-body" class="divide-y divide-zinc-800/40">
+                                    <!-- Preenchido via JS -->
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -261,37 +379,47 @@
     </main>
 
     <!-- Modal: View Proof -->
-    <div id="proof-modal" class="fixed inset-0 bg-black/95 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="glass-panel w-full max-w-3xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="p-4 border-b border-zinc-800 flex justify-between items-center bg-black">
-                <h3 class="font-bold text-yellow-500">Comprovante de Pagamento</h3>
-                <button onclick="app.closeProof()" class="text-gray-400 hover:text-white text-3xl transition">&times;</button>
+    <div id="proof-modal" class="fixed inset-0 bg-black/80 backdrop-blur-lg hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-3xl rounded-3xl overflow-hidden flex flex-col max-h-[90vh] shadow-2xl shadow-yellow-500/10 border-yellow-500/30">
+            <div class="p-5 border-b border-zinc-800/80 flex justify-between items-center bg-black/40">
+                <h3 class="font-bold text-yellow-500 flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Comprovante de Pagamento
+                </h3>
+                <button onclick="app.closeProof()" class="text-zinc-500 hover:text-white bg-zinc-800 hover:bg-zinc-700 w-8 h-8 rounded-full flex items-center justify-center transition-colors">&times;</button>
             </div>
-            <div class="p-4 flex-grow overflow-auto flex justify-center items-center bg-zinc-950 min-h-[300px]" id="proof-container">
+            <div class="p-6 flex-grow overflow-auto flex justify-center items-center bg-zinc-950/80 min-h-[300px]" id="proof-container">
                 <!-- Conteúdo injetado via JS -->
             </div>
         </div>
     </div>
 
-    <!-- Modal: Excluir Aluno (Apenas Suporte) -->
-    <div id="delete-modal" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-50 p-4 backdrop-blur-sm">
-        <div class="glass-panel border-red-500/50 w-full max-w-sm rounded-2xl overflow-hidden flex flex-col p-6 text-center space-y-4">
-            <svg class="w-16 h-16 text-red-500 mx-auto drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-            <h3 class="font-bold text-xl text-white">Atenção!</h3>
-            <p class="text-gray-400 text-sm">Deseja realmente excluir este aluno? Uma vaga será liberada imediatamente para o público.</p>
-            <div class="flex gap-3 mt-4">
-                <button onclick="app.closeDeleteModal()" class="flex-1 py-3 rounded-lg bg-zinc-800 text-white hover:bg-zinc-700 transition font-medium border border-zinc-700">Cancelar</button>
-                <button id="btn-confirm-delete" onclick="app.executeDelete()" class="flex-1 py-3 rounded-lg bg-red-600 text-white font-bold hover:bg-red-700 transition shadow-[0_0_15px_rgba(239,68,68,0.4)]">Sim, Excluir</button>
+    <!-- Modal: Excluir Aluno (Suporte) -->
+    <div id="delete-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 transition-opacity duration-300">
+        <div class="glass-panel border-red-500/30 w-full max-w-sm rounded-3xl overflow-hidden flex flex-col p-8 text-center space-y-5 shadow-2xl shadow-red-500/10 relative">
+            <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent opacity-50"></div>
+            
+            <div class="w-20 h-20 mx-auto bg-red-500/10 rounded-full flex items-center justify-center border border-red-500/20">
+                <svg class="w-10 h-10 text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            </div>
+            
+            <h3 class="font-extrabold text-2xl text-white tracking-tight">Atenção!</h3>
+            <p class="text-zinc-400 text-sm leading-relaxed">Deseja realmente excluir este aluno do Corujão? Uma vaga será liberada imediatamente para o público.</p>
+            
+            <div class="flex gap-3 mt-6">
+                <button onclick="app.closeDeleteModal()" class="flex-1 py-3.5 rounded-xl bg-zinc-800/50 text-white hover:bg-zinc-700 transition-colors font-medium border border-zinc-700 text-sm">Cancelar</button>
+                <button id="btn-confirm-delete" onclick="app.executeDelete()" class="flex-1 py-3.5 rounded-xl bg-red-600/90 text-white font-bold hover:bg-red-500 transition-colors shadow-lg shadow-red-500/20 text-sm">Sim, Excluir</button>
             </div>
         </div>
     </div>
 
+    <!-- Firebase Script & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, updateDoc, setDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // =======================================================================
-        // FIREBASE CONFIG - COLOQUE SUAS CHAVES AQUI PARA PRODUÇÃO (VERCEL)
+        // COLOQUE SUAS CHAVES DO FIREBASE AQUI ANTES DE SUBIR NO VERCEL
         // =======================================================================
         const PRODUCTION_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAEjBx4O2Bub7A0FK7xjvkChwA3x2aCNIU",
@@ -303,15 +431,12 @@
         };
         // =======================================================================
 
-        const isCanvas = typeof __firebase_config !== 'undefined';
-        const configToUse = isCanvas ? JSON.parse(__firebase_config) : PRODUCTION_FIREBASE_CONFIG;
-        
-        const appFirebase = initializeApp(configToUse);
+        const appFirebase = initializeApp(PRODUCTION_FIREBASE_CONFIG);
         const db = getFirestore(appFirebase);
 
         window.app = {
             state: { students: [], link: '', material: '' },
-            currentAdminRole: null, // 'professor' ou 'suporte'
+            currentAdminRole: null, 
             studentToDelete: null,
             MAX_STUDENTS: 100,
 
@@ -331,7 +456,6 @@
             },
 
             setupListeners: () => {
-                // Escutar a coleção de alunos em tempo real
                 onSnapshot(query(collection(db, "students"), orderBy("timestamp", "asc")), (snapshot) => {
                     app.state.students = [];
                     snapshot.forEach((doc) => {
@@ -339,9 +463,8 @@
                     });
                     app.updateUI();
                     if(app.currentAdminRole) app.updateAdminTable();
-                }, (error) => console.error("Erro no listener de alunos:", error));
+                }, (error) => console.error("Erro listener alunos:", error));
 
-                // Escutar o documento de configurações (Link e Material)
                 onSnapshot(doc(db, "settings", "main"), (docSnap) => {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
@@ -349,7 +472,7 @@
                         app.state.material = data.material || '';
                         app.updateDashboardStatus();
                     }
-                }, (error) => console.error("Erro no listener de config:", error));
+                }, (error) => console.error("Erro listener config:", error));
             },
 
             updateUI: () => {
@@ -361,45 +484,47 @@
                 if (count >= app.MAX_STUDENTS) {
                     btnReg.disabled = true;
                     btnReg.innerText = "Vagas Esgotadas";
-                    btnReg.classList.replace('btn-primary', 'bg-zinc-800');
-                    btnReg.classList.add('text-gray-500', 'border', 'border-zinc-700', 'shadow-none');
                 } else {
                     btnReg.disabled = false;
                     btnReg.innerText = "Garantir Minha Vaga";
-                    btnReg.classList.replace('bg-zinc-800', 'btn-primary');
-                    btnReg.classList.remove('text-gray-500', 'border', 'border-zinc-700', 'shadow-none');
                 }
             },
 
             updateDashboardStatus: () => {
-                // Atualiza painel Administrativo
                 const linkLabel = document.getElementById('admin-current-link');
                 const fileLabel = document.getElementById('admin-current-file');
                 
                 if(app.state.link) {
-                    linkLabel.innerHTML = `Link: <a href="${app.state.link}" target="_blank" class="text-yellow-500 underline">Configurado</a>`;
+                    linkLabel.innerHTML = `
+                        <svg class="w-4 h-4 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <a href="${app.state.link}" target="_blank" class="text-yellow-500 hover:text-yellow-400 font-medium hover:underline transition-colors">Configurado (Ver link)</a>`;
                 } else {
-                    linkLabel.innerHTML = `Link: <span class="text-zinc-500">Nenhum</span>`;
+                    linkLabel.innerHTML = `
+                        <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+                        <span class="text-zinc-600 italic">Link não configurado</span>`;
                 }
                 
                 if(app.state.material) {
-                    fileLabel.innerHTML = `Material: <span class="text-yellow-500 font-medium">Arquivo Salvo (PDF)</span>`;
+                    fileLabel.innerHTML = `
+                        <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="text-green-500 font-medium">Arquivo Salvo (PDF)</span>`;
                 } else {
-                    fileLabel.innerHTML = `Material: <span class="text-zinc-500">Nenhum</span>`;
+                    fileLabel.innerHTML = `
+                        <svg class="w-4 h-4 text-zinc-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="text-zinc-600 italic">Material não enviado</span>`;
                 }
 
-                // Atualiza painel do Aluno
                 const aLink = document.getElementById('student-meeting-link');
                 const aFile = document.getElementById('student-material-link');
                 
                 if (app.state.link) {
                     aLink.href = app.state.link;
-                    aLink.classList.remove('pointer-events-none', 'opacity-50');
-                    aLink.innerText = "Entrar na Aula";
+                    aLink.classList.remove('pointer-events-none', 'opacity-40');
+                    aLink.innerText = "Entrar na Aula ao Vivo";
                 }
                 if (app.state.material) {
                     aFile.href = app.state.material;
-                    aFile.classList.remove('pointer-events-none', 'opacity-50');
+                    aFile.classList.remove('pointer-events-none', 'opacity-40');
                     aFile.innerText = "Baixar Material (PDF)";
                 }
             },
@@ -410,26 +535,29 @@
                 document.getElementById('admin-spots-counter').innerText = `${app.state.students.length}/${app.MAX_STUDENTS}`;
 
                 if (app.state.students.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-zinc-500">Nenhum aluno inscrito no momento.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-8 text-center text-zinc-600 italic">Ainda não há inscritos no Corujão.</td></tr>`;
                     return;
                 }
 
                 app.state.students.forEach((student, index) => {
                     const tr = document.createElement('tr');
-                    tr.className = "hover:bg-zinc-800/30 transition-colors";
+                    tr.className = "hover:bg-zinc-800/30 transition-colors group";
                     
-                    // Lógica de papéis: O botão de excluir aparece SOMENTE para o suporte
-                    let actionButtons = `<button onclick="app.viewProof('${student.id}')" class="btn-secondary px-3 py-1.5 rounded-lg text-xs font-bold">Ver Comprovante</button>`;
+                    let actionButtons = `<button onclick="app.viewProof('${student.id}')" class="btn-secondary px-4 py-1.5 rounded-lg text-[11px] uppercase tracking-wider font-bold">Comprovante</button>`;
                     if(app.currentAdminRole === 'suporte') {
-                        actionButtons += `<button onclick="app.confirmDelete('${student.id}')" class="btn-danger px-3 py-1.5 rounded-lg text-xs font-bold ml-2">Excluir</button>`;
+                        actionButtons += `<button onclick="app.confirmDelete('${student.id}')" class="btn-danger px-4 py-1.5 rounded-lg text-[11px] uppercase tracking-wider font-bold ml-2 opacity-0 group-hover:opacity-100 transition-opacity">Excluir</button>`;
                     }
 
                     tr.innerHTML = `
-                        <td class="p-4 text-yellow-500 font-mono font-bold">${index + 1}</td>
+                        <td class="p-4 text-center font-mono font-bold text-yellow-500/50 group-hover:text-yellow-500 transition-colors w-12">${index + 1}</td>
                         <td class="p-4 font-medium text-white">${student.name}</td>
-                        <td class="p-4 text-gray-400">${student.email}</td>
-                        <td class="p-4 text-gray-400">${student.phone}</td>
-                        <td class="p-4 text-right">${actionButtons}</td>
+                        <td class="p-4">
+                            <div class="flex flex-col">
+                                <span class="text-zinc-300 text-xs">${student.phone}</span>
+                                <span class="text-zinc-500 text-[10px]">${student.email}</span>
+                            </div>
+                        </td>
+                        <td class="p-4 text-right pr-6">${actionButtons}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -438,53 +566,48 @@
             viewProof: (id) => {
                 const student = app.state.students.find(s => s.id === id);
                 if (!student || !student.proof) return;
-
                 const container = document.getElementById('proof-container');
                 container.innerHTML = '';
 
                 if (student.proof.startsWith('data:image')) {
                     const img = document.createElement('img');
                     img.src = student.proof;
-                    img.className = "max-w-full max-h-[70vh] object-contain rounded-lg";
+                    img.className = "max-w-full max-h-[70vh] object-contain rounded-xl shadow-2xl";
                     container.appendChild(img);
                 } else if (student.proof.startsWith('data:application/pdf')) {
                     const iframe = document.createElement('iframe');
                     iframe.src = student.proof;
-                    iframe.className = "w-full h-[70vh] rounded-lg bg-white border-0";
+                    iframe.className = "w-full h-[70vh] rounded-xl bg-white border-0 shadow-2xl";
                     container.appendChild(iframe);
                 }
 
                 document.getElementById('proof-modal').classList.remove('hidden');
             },
 
-            closeProof: () => {
-                document.getElementById('proof-modal').classList.add('hidden');
-            },
+            closeProof: () => document.getElementById('proof-modal').classList.add('hidden'),
 
-            // Lógica de Exclusão (Apenas Suporte)
             confirmDelete: (id) => {
                 app.studentToDelete = id;
                 document.getElementById('delete-modal').classList.remove('hidden');
             },
 
             executeDelete: async () => {
-                if(app.studentToDelete) {
-                    const btn = document.getElementById('btn-confirm-delete');
-                    const originalText = btn.innerText;
-                    btn.innerText = "Excluindo...";
-                    btn.disabled = true;
+                if(!app.studentToDelete) return;
+                const btn = document.getElementById('btn-confirm-delete');
+                const originalText = btn.innerText;
+                btn.innerText = "Apagando...";
+                btn.disabled = true;
 
-                    try {
-                        await deleteDoc(doc(db, "students", app.studentToDelete));
-                        app.closeDeleteModal();
-                        // Aviso visual rápido de sucesso não é estritamente necessário pois a lista atualiza instantaneamente
-                    } catch(e) {
-                        console.error("Erro na exclusão: ", e);
-                        alert(`Erro ao excluir aluno. Verifique as permissões de segurança (Regras do Firestore).\n\nDetalhe do erro: ${e.message}`);
-                    } finally {
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                    }
+                try {
+                    console.log("Tentando apagar aluno: ", app.studentToDelete);
+                    await deleteDoc(doc(db, "students", app.studentToDelete));
+                    app.closeDeleteModal();
+                } catch(e) {
+                    console.error("ERRO AO DELETAR:", e);
+                    alert(`🚨 Erro de Permissão no Banco de Dados!\n\nSeu Firebase bloqueou a exclusão.\n\nVá no Console do Firebase > Firestore Database > Regras.\nModifique para: allow read, write: if true;`);
+                } finally {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
                 }
             },
 
@@ -504,7 +627,6 @@
             },
 
             setupEventListeners: () => {
-                // Submissão do Formulário de Inscrição
                 document.getElementById('reg-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     if (app.state.students.length >= app.MAX_STUDENTS) {
@@ -514,17 +636,15 @@
 
                     const btn = document.getElementById('btn-submit-reg');
                     btn.disabled = true;
-                    btn.innerText = "Processando Inscrição...";
+                    btn.innerText = "Processando Reserva...";
 
                     try {
                         const file = document.getElementById('reg-file').files[0];
                         if (file.size > 800 * 1024) throw new Error("O arquivo excede o limite máximo de 800KB.");
                         
                         const emailInput = document.getElementById('reg-email').value.toLowerCase().trim();
-                        
-                        // Previne duplicidade local
                         if(app.state.students.some(s => s.email === emailInput)) {
-                            throw new Error("Este e-mail já está inscrito no Corujão.");
+                            throw new Error("Este e-mail já possui uma vaga reservada no Corujão.");
                         }
 
                         const base64File = await app.fileToBase64(file);
@@ -537,18 +657,17 @@
                             timestamp: Date.now()
                         });
 
-                        alert("Inscrição confirmada com sucesso! Bem-vindo ao Corujão.");
+                        alert("Inscrição confirmada! Boas-vindas ao Corujão.");
                         e.target.reset();
                         app.showView('home-view');
                     } catch (error) {
-                        alert("Aviso: " + error.message);
+                        alert("Atenção: " + error.message);
                     } finally {
                         btn.disabled = false;
                         btn.innerText = "Finalizar Inscrição";
                     }
                 });
 
-                // Submissão do Login da Equipe
                 document.getElementById('admin-login-form').addEventListener('submit', (e) => {
                     e.preventDefault();
                     const user = document.getElementById('admin-user').value.toLowerCase().trim();
@@ -557,12 +676,14 @@
                     if (user === 'suporte' && pass === 'supmentor26') {
                         app.currentAdminRole = 'suporte';
                         document.getElementById('admin-role-label').innerText = "Suporte Técnico";
+                        document.getElementById('admin-role-label').className = "text-red-400 font-bold uppercase tracking-wider text-[10px] bg-red-500/10 px-2 py-1 rounded ml-1 border border-red-500/20";
                         app.updateAdminTable();
                         app.showView('admin-dashboard-view');
                         e.target.reset();
                     } else if (user === 'professor' && pass === 'mentorpm26') {
                         app.currentAdminRole = 'professor';
                         document.getElementById('admin-role-label').innerText = "Professor(a)";
+                        document.getElementById('admin-role-label').className = "text-yellow-500 font-bold uppercase tracking-wider text-[10px] bg-yellow-500/10 px-2 py-1 rounded ml-1 border border-yellow-500/20";
                         app.updateAdminTable();
                         app.showView('admin-dashboard-view');
                         e.target.reset();
@@ -571,7 +692,6 @@
                     }
                 });
 
-                // Submissão do Login do Aluno
                 document.getElementById('student-login-form').addEventListener('submit', (e) => {
                     e.preventDefault();
                     const email = document.getElementById('login-email').value.toLowerCase().trim();
@@ -581,17 +701,16 @@
                         app.showView('student-dashboard-view');
                         e.target.reset();
                     } else {
-                        alert("Este e-mail não foi encontrado na lista de inscritos confirmados.");
+                        alert("Acesso Negado: E-mail não encontrado na lista oficial de inscritos.");
                     }
                 });
 
-                // Submissão de Uploads no Painel da Equipe
                 document.getElementById('admin-upload-form').addEventListener('submit', async (e) => {
                     e.preventDefault();
                     const btn = document.getElementById('btn-save-settings');
                     const origText = btn.innerText;
                     btn.disabled = true;
-                    btn.innerText = "Salvando no Banco...";
+                    btn.innerText = "Enviando para Nuvem...";
 
                     try {
                         const link = document.getElementById('admin-link').value.trim();
@@ -607,16 +726,15 @@
                         }
 
                         if(Object.keys(payload).length > 0) {
-                            // setDoc com {merge: true} garante que ele atualize ou crie o doc se ele não existir ainda
                             await setDoc(doc(db, "settings", "main"), payload, { merge: true });
-                            alert("Configurações salvas e disponibilizadas para os alunos com sucesso!");
+                            alert("Sucesso! Plataforma atualizada para todos os alunos.");
                             e.target.reset();
                         } else {
-                            alert("Preencha o link ou anexe um arquivo para salvar.");
+                            alert("Preencha o link ou anexe um arquivo para atualizar.");
                         }
                     } catch (error) {
                         console.error("Erro ao salvar settings: ", error);
-                        alert("Ocorreu um erro ao salvar as informações: " + error.message);
+                        alert("Falha na atualização: " + error.message);
                     } finally {
                         btn.disabled = false;
                         btn.innerText = origText;
@@ -625,7 +743,6 @@
             }
         };
 
-        // Iniciar inicializações pós-load
         window.addEventListener('DOMContentLoaded', () => {
             app.setupListeners();
             app.setupEventListeners();
