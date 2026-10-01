@@ -290,7 +290,7 @@
                                 <label class="block text-sm text-gray-400 mb-1">Link da Reunião (Zoom/Meet/YouTube)</label>
                                 <p class="text-xs mb-2 text-gray-500">Link atual: <span id="admin-current-link" class="text-gray-400 font-medium">Nenhum link configurado</span></p>
                                 <div class="flex gap-2">
-                                    <input type="url" id="admin-meeting-link" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" placeholder="Cole o link aqui">
+                                    <input type="url" id="admin-meeting-link" class="flex-grow bg-zinc-900 border border-zinc-700 rounded px-3 py-2 text-sm text-white focus:outline-none focus:border-yellow-500" placeholder="https://...">
                                     <button onclick="app.updateMeetingLink()" class="px-4 bg-yellow-500 hover:bg-yellow-400 text-black rounded text-sm font-bold transition-colors">Salvar</button>
                                 </div>
                             </div>
@@ -383,7 +383,7 @@
             apiKey: "AIzaSyAEjBx4O2Bub7A0FK7xjvkChwA3x2aCNIU",
             authDomain: "mentoria-pmma.firebaseapp.com",
             projectId: "mentoria-pmma",
-            storageBucket: "mentoria-pmma.firebasestorage.ap",
+            storageBucket: "mentoria-pmma.firebasestorage.app",
             messagingSenderId: "961531782513",
             appId: "1:961531782513:web:ed1221f896d1e58d3382d0"
         };
@@ -600,16 +600,16 @@
                         const docData = {
                             name: document.getElementById('reg-name').value.trim(),
                             email: emailInput,
-                            phone: document.getElementById('reg-phone').value.trim(),
-                            receiptBase64: base64Str,
-                            timestamp: Date.now()
-                        };
-
-                        await addDoc(app.refs.registrations, docData);
-                        
-                        app.showToast("Inscrição confirmada com sucesso!", "success");
-                        document.getElementById('register-form').reset();
-                        app.navigate('home');
+                        if(Object.keys(payload).length > 0) {
+                            try {
+                                await updateDoc(doc(db, "settings", "main"), payload);
+                            } catch (err) {
+                                // Se o documento ainda não existir, ele cria um novo de forma forçada
+                                await setDoc(doc(db, "settings", "main"), payload, { merge: true });
+                            }
+                            alert("Dados atualizados para os alunos!");
+                            e.target.reset();
+                        }
                     } catch (error) {
                         console.error("Erro na inscrição:", error);
                         app.showToast("Erro ao processar inscrição. Tente novamente.", "error");
@@ -640,7 +640,7 @@
                     const user = document.getElementById('admin-user').value.trim().toLowerCase();
                     const pwd = document.getElementById('admin-pwd').value;
                     
-                    const isProfessor = (user === 'rafaelfranco' && pwd === 'mentorpm26');
+                    const isProfessor = (user === 'professor' && pwd === 'mentorpm26');
                     const isSupport = (user === 'suporte' && pwd === 'supmentor26');
 
                     if (isProfessor || isSupport) {
